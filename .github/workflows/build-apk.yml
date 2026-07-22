@@ -59,6 +59,7 @@ jobs:
 
           PRESET_FILE="$PROJECT_DIR/export_presets.cfg"
           PROJECT_FILE="$PROJECT_DIR/project.godot"
+          sed -i 's/^script_export_mode=.*/script_export_mode=0/' "$PRESET_FILE"
 
           if [ ! -f "$PRESET_FILE" ]; then
             echo "export_presets.cfg was not found."
