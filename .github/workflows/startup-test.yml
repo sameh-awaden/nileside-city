@@ -1,0 +1,129 @@
+name: Diagnose Nileside Startup
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/startup-test.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  diagnose-startup:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Extract Godot project
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          ZIP_FILE="$(find . -maxdepth 1 -type f \
+            -name 'nileside_city_godot_v0_1*.zip' | head -n 1)"
+
+          if [ -z "$ZIP_FILE" ]; then
+            echo "Nileside project ZIP was not found."
+            exit 1
+          fi
+
+          rm -rf extracted
+          mkdir -p extracted
+
+          unzip -q -o "$ZIP_FILE" -d extracted
+
+          PROJECT_FILE="$(find extracted -type f \
+            -name 'project.godot' | head -n 1)"
+
+          if [ -z "$PROJECT_FILE" ]; then
+            echo "project.godot was not found inside the ZIP."
+            exit 1
+          fi
+
+          PROJECT_DIR="$(dirname "$PROJECT_FILE")"
+
+          echo "PROJECT_DIR=$PROJECT_DIR" >> "$GITHUB_ENV"
+          echo "Project directory: $PROJECT_DIR"
+
+      - name: Download Godot
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          mkdir -p godot-bin
+
+          curl \
+            --location \
+            --fail \
+            --retry 3 \
+            --output godot.zip \
+            "https://github.com/godotengine/godot-builds/releases/download/4.7.1-stable/Godot_v4.7.1-stable_linux.x86_64.zip"
+
+          unzip -q godot.zip -d godot-bin
+
+          GODOT_BIN="$(find godot-bin -maxdepth 1 -type f \
+            -name 'Godot*' | head -n 1)"
+
+          if [ -z "$GODOT_BIN" ]; then
+            echo "Godot executable was not found."
+            exit 1
+          fi
+
+          chmod +x "$GODOT_BIN"
+
+          echo "GODOT_BIN=$GODOT_BIN" >> "$GITHUB_ENV"
+
+          "$GODOT_BIN" --version
+
+      - name: Run project startup test
+        shell: bash
+        run: |
+          set -uo pipefail
+
+          "$GODOT_BIN" \
+            --headless \
+            --path "$PROJECT_DIR" \
+            --quit-after 180 \
+            --verbose \
+            2>&1 | tee startup.log
+
+          GODOT_STATUS=${PIPESTATUS[0]}
+
+          echo
+          echo "Godot exit status: $GODOT_STATUS"
+          echo
+          echo "========== DETECTED ERRORS =========="
+
+          grep -Ein \
+            "SCRIPT ERROR|Parse Error|Failed to load script|Failed loading resource|Error loading resource|Invalid access|Invalid call|Cannot call method|Attempt to call|Cannot assign|not found in base|Stack overflow" \
+            startup.log || true
+
+          if grep -Eiq \
+            "SCRIPT ERROR|Parse Error|Failed to load script|Failed loading resource|Error loading resource|Invalid access|Invalid call|Cannot call method|Attempt to call|Cannot assign|not found in base|Stack overflow" \
+            startup.log; then
+            echo
+            echo "A project startup error was detected."
+            exit 1
+          fi
+
+          if [ "$GODOT_STATUS" -ne 0 ]; then
+            echo "Godot exited unexpectedly."
+            exit "$GODOT_STATUS"
+          fi
+
+          echo "No startup error was detected."
+
+      - name: Upload diagnostic log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Nileside-Startup-Log
+          path: startup.log
+          if-no-files-found: warn
+          retention-days: 7
