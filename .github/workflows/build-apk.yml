@@ -2,11 +2,13 @@ name: Build Nileside City APK
 
 on:
   workflow_dispatch:
+
   push:
     branches:
       - main
     paths:
-      - "nileside_city_godot_v0_1*.zip"
+      - "nileside_city_godot_v0_1_fixed.zip"
+      - "nileside_city_godot_v0_1_fixed_v2.zip"
       - ".github/workflows/build-apk.yml"
 
 permissions:
@@ -14,6 +16,7 @@ permissions:
 
 jobs:
   build-apk:
+    name: build-apk
     runs-on: ubuntu-latest
     timeout-minutes: 45
 
@@ -26,69 +29,212 @@ jobs:
         run: |
           set -euo pipefail
 
-          ZIP_FILE="$(find . -maxdepth 1 -type f \
-            -name 'nileside_city_godot_v0_1_fixed.zip' | head -n 1)"
+          ZIP_FILE=""
+
+          for candidate in \
+            "./nileside_city_godot_v0_1_fixed_v2.zip" \
+            "./nileside_city_godot_v0_1_fixed.zip"
+          do
+            if [ -f "$candidate" ]; then
+              echo "Checking ZIP: $candidate"
+
+              if unzip -tq "$candidate" >/dev/null 2>&1; then
+                ZIP_FILE="$candidate"
+                break
+              else
+                echo "Ignoring invalid ZIP: $candidate"
+              fi
+            fi
+          done
 
           if [ -z "$ZIP_FILE" ]; then
-            echo "Could not find the Nileside City ZIP in the repository root."
+            echo "No valid repaired Nileside City ZIP was found."
+            echo
+            echo "Expected one of:"
+            echo "  nileside_city_godot_v0_1_fixed_v2.zip"
+            echo "  nileside_city_godot_v0_1_fixed.zip"
+            echo
+            echo "Repository ZIP files:"
+            find . -maxdepth 1 -type f -name "*.zip" -print
             exit 1
           fi
+
+          echo "Using ZIP: $ZIP_FILE"
+          unzip -t "$ZIP_FILE"
 
           rm -rf extracted
           mkdir -p extracted
 
           unzip -q -o "$ZIP_FILE" -d extracted
 
-          PROJECT_FILE="$(find extracted -type f \
-            -name 'project.godot' | head -n 1)"
+          PROJECT_FILE="$(find extracted -type f -name "project.godot" | head -n 1)"
 
           if [ -z "$PROJECT_FILE" ]; then
-            echo "The ZIP does not contain project.godot."
+            echo "project.godot was not found inside $ZIP_FILE."
             exit 1
           fi
 
           PROJECT_DIR="$(dirname "$PROJECT_FILE")"
 
+          echo "ZIP_FILE=$ZIP_FILE" >> "$GITHUB_ENV"
           echo "PROJECT_DIR=$PROJECT_DIR" >> "$GITHUB_ENV"
-          echo "Project found at: $PROJECT_DIR"
 
-      - name: Fix Android export configuration
+          echo "Project directory: $PROJECT_DIR"
+          find "$PROJECT_DIR" -maxdepth 3 -type f | sort
+
+      - name: Fix GDScript and Android export configuration
         shell: bash
         run: |
           set -euo pipefail
 
-          PRESET_FILE="$PROJECT_DIR/export_presets.cfg"
-          PROJECT_FILE="$PROJECT_DIR/project.godot"
-          sed -i 's/^script_export_mode=.*/script_export_mode=0/' "$PRESET_FILE"
+          python3 <<'PY'
+          import os
+          import re
+          from pathlib import Path
 
-          if [ ! -f "$PRESET_FILE" ]; then
-            echo "export_presets.cfg was not found."
-            exit 1
-          fi
+          project_dir = Path(os.environ["PROJECT_DIR"])
 
-          # These options are only valid when Gradle Build is enabled.
-          sed -i '/^gradle_build\/min_sdk=/d' "$PRESET_FILE"
-          sed -i '/^gradle_build\/target_sdk=/d' "$PRESET_FILE"
+          main_script = project_dir / "scripts" / "main.gd"
+          project_file = project_dir / "project.godot"
+          preset_file = project_dir / "export_presets.cfg"
 
-          # Remove any existing value before adding the correct Android setting.
-          sed -i \
-            '/^textures\/vram_compression\/import_etc2_astc=/d' \
-            "$PROJECT_FILE"
+          for required_file in (main_script, project_file, preset_file):
+              if not required_file.exists():
+                  raise SystemExit(f"Required file was not found: {required_file}")
 
-          # Add ETC2/ASTC importing inside the existing rendering section.
-          sed -i \
-            '/^\[rendering\]$/a textures/vram_compression/import_etc2_astc=true' \
-            "$PROJECT_FILE"
+          # Fix the remaining GDScript type-inference error.
+          main_content = main_script.read_text(encoding="utf-8")
 
-          echo "Updated export_presets.cfg:"
-          grep -E \
-            'use_gradle_build|min_sdk|target_sdk' \
-            "$PRESET_FILE" || true
+          old_cost_line = "var cost := factory.factory_upgrade_cost()"
+          new_cost_line = "var cost: Dictionary = factory.factory_upgrade_cost()"
 
-          echo "Updated Android texture setting:"
-          grep \
-            'textures/vram_compression/import_etc2_astc' \
-            "$PROJECT_FILE"
+          if old_cost_line in main_content:
+              main_content = main_content.replace(old_cost_line, new_cost_line)
+              main_script.write_text(main_content, encoding="utf-8")
+              print("Patched factory upgrade cost type.")
+          elif new_cost_line in main_content:
+              print("Factory upgrade cost type was already patched.")
+          else:
+              raise SystemExit(
+                  "Could not find the expected factory_upgrade_cost line in main.gd."
+              )
+
+          # Fix export preset options that are invalid without Gradle.
+          preset_content = preset_file.read_text(encoding="utf-8")
+
+          filtered_preset_lines = []
+
+          for line in preset_content.splitlines():
+              stripped = line.strip()
+
+              if stripped.startswith("gradle_build/min_sdk="):
+                  print(f"Removing invalid preset option: {stripped}")
+                  continue
+
+              if stripped.startswith("gradle_build/target_sdk="):
+                  print(f"Removing invalid preset option: {stripped}")
+                  continue
+
+              filtered_preset_lines.append(line)
+
+          preset_content = "\n".join(filtered_preset_lines).rstrip() + "\n"
+
+          # Export scripts as text for easier debug builds.
+          if re.search(
+              r"^script_export_mode=.*$",
+              preset_content,
+              flags=re.MULTILINE
+          ):
+              preset_content = re.sub(
+                  r"^script_export_mode=.*$",
+                  "script_export_mode=0",
+                  preset_content,
+                  flags=re.MULTILINE
+              )
+
+          preset_file.write_text(preset_content, encoding="utf-8")
+
+          # Ensure Android-compatible rendering and ETC2/ASTC textures.
+          project_content = project_file.read_text(encoding="utf-8")
+
+          required_rendering_settings = {
+              'renderer/rendering_method':
+                  'renderer/rendering_method="gl_compatibility"',
+              'renderer/rendering_method.mobile':
+                  'renderer/rendering_method.mobile="gl_compatibility"',
+              'textures/vram_compression/import_etc2_astc':
+                  'textures/vram_compression/import_etc2_astc=true',
+          }
+
+          if "[rendering]" not in project_content:
+              project_content = (
+                  project_content.rstrip()
+                  + "\n\n[rendering]\n"
+              )
+
+          rendering_section_start = project_content.index("[rendering]")
+          following_content = project_content[rendering_section_start + len("[rendering]"):]
+
+          next_section_match = re.search(r"\n\[[^\]]+\]", following_content)
+
+          if next_section_match:
+              rendering_section_end = (
+                  rendering_section_start
+                  + len("[rendering]")
+                  + next_section_match.start()
+              )
+          else:
+              rendering_section_end = len(project_content)
+
+          rendering_section = project_content[
+              rendering_section_start:rendering_section_end
+          ]
+
+          for setting_key, complete_line in required_rendering_settings.items():
+              setting_pattern = re.compile(
+                  rf"^{re.escape(setting_key)}=.*$",
+                  flags=re.MULTILINE
+              )
+
+              if setting_pattern.search(rendering_section):
+                  rendering_section = setting_pattern.sub(
+                      complete_line,
+                      rendering_section
+                  )
+              else:
+                  rendering_section = (
+                      rendering_section.rstrip()
+                      + "\n"
+                      + complete_line
+                      + "\n"
+                  )
+
+          project_content = (
+              project_content[:rendering_section_start]
+              + rendering_section
+              + project_content[rendering_section_end:]
+          )
+
+          project_file.write_text(project_content, encoding="utf-8")
+
+          print()
+          print("Patched main.gd lines:")
+          for line_number, line in enumerate(
+              main_script.read_text(encoding="utf-8").splitlines(),
+              start=1
+          ):
+              if "factory_upgrade_cost" in line:
+                  print(f"{line_number}: {line}")
+
+          print()
+          print("Android rendering settings:")
+          for line in project_file.read_text(encoding="utf-8").splitlines():
+              if (
+                  "renderer/rendering_method" in line
+                  or "import_etc2_astc" in line
+              ):
+                  print(line)
+          PY
 
       - name: Set up Java 17
         uses: actions/setup-java@v4
@@ -109,7 +255,12 @@ jobs:
           sdkmanager \
             "platform-tools" \
             "platforms;android-35" \
-            "build-tools;35.0.1"
+            "build-tools;35.0.0"
+
+          echo "ANDROID_HOME=$ANDROID_HOME"
+          echo "ANDROID_SDK_ROOT=$ANDROID_SDK_ROOT"
+
+          sdkmanager --list_installed
 
       - name: Create Android debug keystore
         shell: bash
@@ -119,7 +270,8 @@ jobs:
           mkdir -p "$HOME/.android"
 
           if [ ! -f "$HOME/.android/debug.keystore" ]; then
-            keytool -genkeypair \
+            keytool \
+              -genkeypair \
               -v \
               -keystore "$HOME/.android/debug.keystore" \
               -storepass android \
@@ -161,16 +313,21 @@ jobs:
             "$HOME/.local/share/godot/builds" \
             "$PROJECT_DIR" \
             -type f \
-            -name '*.apk' \
+            -name "*.apk" \
             2>/dev/null | head -n 1)"
 
           if [ -z "$APK_FILE" ]; then
             echo "Godot finished without producing an APK."
-            echo "Searching available build folders:"
-            find "$HOME/.local/share/godot" "$PROJECT_DIR" \
-              -maxdepth 5 \
+            echo
+            echo "Files found in Godot build directories:"
+
+            find \
+              "$HOME/.local/share/godot" \
+              "$PROJECT_DIR" \
+              -maxdepth 7 \
               -type f \
-              2>/dev/null || true
+              2>/dev/null | sort || true
+
             exit 1
           fi
 
@@ -178,6 +335,8 @@ jobs:
 
           echo "APK found:"
           ls -lh "$APK_FILE"
+
+          file "$APK_FILE"
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
