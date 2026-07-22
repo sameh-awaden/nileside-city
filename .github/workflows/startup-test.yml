@@ -2,10 +2,13 @@ name: Diagnose Nileside Startup
 
 on:
   workflow_dispatch:
+
   push:
     branches:
       - main
     paths:
+      - "nileside_city_godot_v0_1_fixed.zip"
+      - "nileside_city_godot_v0_1_fixed_v2.zip"
       - ".github/workflows/startup-test.yml"
 
 permissions:
@@ -13,6 +16,7 @@ permissions:
 
 jobs:
   diagnose-startup:
+    name: diagnose-startup
     runs-on: ubuntu-latest
     timeout-minutes: 15
 
@@ -20,58 +24,126 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Extract Godot project
+      - name: Locate and extract Godot project
         shell: bash
         run: |
           set -euo pipefail
 
-          ZIP_FILE="$(find . -maxdepth 1 -type f \
-            -name 'nileside_city_godot_v0_1_fixed.zip' | head -n 1)"
+          ZIP_FILE=""
+
+          for candidate in \
+            "./nileside_city_godot_v0_1_fixed_v2.zip" \
+            "./nileside_city_godot_v0_1_fixed.zip"
+          do
+            if [ -f "$candidate" ]; then
+              echo "Checking ZIP: $candidate"
+
+              if unzip -tq "$candidate" >/dev/null 2>&1; then
+                ZIP_FILE="$candidate"
+                break
+              else
+                echo "Ignoring invalid ZIP: $candidate"
+              fi
+            fi
+          done
 
           if [ -z "$ZIP_FILE" ]; then
-            echo "Nileside project ZIP was not found."
+            echo "No valid repaired Nileside City ZIP was found."
+            echo
+            echo "Expected one of:"
+            echo "  nileside_city_godot_v0_1_fixed_v2.zip"
+            echo "  nileside_city_godot_v0_1_fixed.zip"
+            echo
+            echo "Repository ZIP files:"
+            find . -maxdepth 1 -type f -name "*.zip" -print
             exit 1
           fi
+
+          echo "Using ZIP: $ZIP_FILE"
+          unzip -t "$ZIP_FILE"
 
           rm -rf extracted
           mkdir -p extracted
 
           unzip -q -o "$ZIP_FILE" -d extracted
 
-          PROJECT_FILE="$(find extracted -type f \
-            -name 'project.godot' | head -n 1)"
+          PROJECT_FILE="$(find extracted -type f -name "project.godot" | head -n 1)"
 
           if [ -z "$PROJECT_FILE" ]; then
-            echo "project.godot was not found inside the ZIP."
+            echo "project.godot was not found inside $ZIP_FILE."
             exit 1
           fi
 
           PROJECT_DIR="$(dirname "$PROJECT_FILE")"
 
+          echo "ZIP_FILE=$ZIP_FILE" >> "$GITHUB_ENV"
           echo "PROJECT_DIR=$PROJECT_DIR" >> "$GITHUB_ENV"
-          echo "Project directory: $PROJECT_DIR"
 
-      - name: Download Godot
+          echo "Project directory: $PROJECT_DIR"
+          find "$PROJECT_DIR" -maxdepth 3 -type f | sort
+
+      - name: Fix remaining GDScript type inference
         shell: bash
         run: |
           set -euo pipefail
 
+          python3 <<'PY'
+          import os
+          from pathlib import Path
+
+          project_dir = Path(os.environ["PROJECT_DIR"])
+          main_script = project_dir / "scripts" / "main.gd"
+
+          if not main_script.exists():
+              raise SystemExit(f"main.gd was not found at: {main_script}")
+
+          content = main_script.read_text(encoding="utf-8")
+
+          old_line = "var cost := factory.factory_upgrade_cost()"
+          new_line = "var cost: Dictionary = factory.factory_upgrade_cost()"
+
+          if old_line in content:
+              content = content.replace(old_line, new_line)
+              main_script.write_text(content, encoding="utf-8")
+              print("Patched factory upgrade cost type.")
+          elif new_line in content:
+              print("Factory upgrade cost type was already patched.")
+          else:
+              raise SystemExit(
+                  "Could not find the expected factory_upgrade_cost line in main.gd."
+              )
+
+          for line_number, line in enumerate(
+              main_script.read_text(encoding="utf-8").splitlines(),
+              start=1
+          ):
+              if "factory_upgrade_cost" in line:
+                  print(f"{line_number}: {line}")
+          PY
+
+      - name: Download Godot 4.7.1
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          rm -rf godot-bin godot.zip
           mkdir -p godot-bin
 
           curl \
             --location \
             --fail \
             --retry 3 \
+            --retry-delay 3 \
             --output godot.zip \
             "https://github.com/godotengine/godot-builds/releases/download/4.7.1-stable/Godot_v4.7.1-stable_linux.x86_64.zip"
 
           unzip -q godot.zip -d godot-bin
 
-          GODOT_BIN="$(find godot-bin -maxdepth 1 -type f \
-            -name 'Godot*' | head -n 1)"
+          GODOT_BIN="$(find godot-bin -maxdepth 1 -type f -name "Godot*" | head -n 1)"
 
           if [ -z "$GODOT_BIN" ]; then
             echo "Godot executable was not found."
+            find godot-bin -maxdepth 2 -type f -print
             exit 1
           fi
 
@@ -85,6 +157,8 @@ jobs:
         shell: bash
         run: |
           set -uo pipefail
+
+          rm -f startup.log
 
           "$GODOT_BIN" \
             --headless \
@@ -100,23 +174,23 @@ jobs:
           echo
           echo "========== DETECTED ERRORS =========="
 
-          grep -Ein \
-            "SCRIPT ERROR|Parse Error|Failed to load script|Failed loading resource|Error loading resource|Invalid access|Invalid call|Cannot call method|Attempt to call|Cannot assign|not found in base|Stack overflow" \
-            startup.log || true
+          ERROR_PATTERN="SCRIPT ERROR|Parse Error|Failed to load script|Failed loading resource|Error loading resource|Invalid access|Invalid call|Cannot call method|Attempt to call|Cannot assign|not found in base|Stack overflow|Cannot infer the type|Warning treated as error"
 
-          if grep -Eiq \
-            "SCRIPT ERROR|Parse Error|Failed to load script|Failed loading resource|Error loading resource|Invalid access|Invalid call|Cannot call method|Attempt to call|Cannot assign|not found in base|Stack overflow" \
-            startup.log; then
+          grep -Ein "$ERROR_PATTERN" startup.log || true
+
+          if grep -Eiq "$ERROR_PATTERN" startup.log; then
             echo
             echo "A project startup error was detected."
             exit 1
           fi
 
           if [ "$GODOT_STATUS" -ne 0 ]; then
-            echo "Godot exited unexpectedly."
+            echo
+            echo "Godot exited unexpectedly with status $GODOT_STATUS."
             exit "$GODOT_STATUS"
           fi
 
+          echo
           echo "No startup error was detected."
 
       - name: Upload diagnostic log
