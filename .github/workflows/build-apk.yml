@@ -3,7 +3,8 @@ name: Build Nileside City APK
 on:
   workflow_dispatch:
   push:
-    branches: [main]
+    branches:
+      - main
     paths:
       - "nileside_city_godot_v0_1*.zip"
       - ".github/workflows/build-apk.yml"
@@ -24,21 +25,69 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          ZIP_FILE="$(find . -maxdepth 1 -type f -name 'nileside_city_godot_v0_1*.zip' | head -n 1)"
+
+          ZIP_FILE="$(find . -maxdepth 1 -type f \
+            -name 'nileside_city_godot_v0_1*.zip' | head -n 1)"
+
           if [ -z "$ZIP_FILE" ]; then
-            echo "Could not find nileside_city_godot_v0_1.zip in the repository root."
+            echo "Could not find the Nileside City ZIP in the repository root."
             exit 1
           fi
+
+          rm -rf extracted
           mkdir -p extracted
+
           unzip -q -o "$ZIP_FILE" -d extracted
-          PROJECT_FILE="$(find extracted -type f -name project.godot | head -n 1)"
+
+          PROJECT_FILE="$(find extracted -type f \
+            -name 'project.godot' | head -n 1)"
+
           if [ -z "$PROJECT_FILE" ]; then
             echo "The ZIP does not contain project.godot."
             exit 1
           fi
+
           PROJECT_DIR="$(dirname "$PROJECT_FILE")"
+
           echo "PROJECT_DIR=$PROJECT_DIR" >> "$GITHUB_ENV"
           echo "Project found at: $PROJECT_DIR"
+
+      - name: Fix Android export configuration
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          PRESET_FILE="$PROJECT_DIR/export_presets.cfg"
+          PROJECT_FILE="$PROJECT_DIR/project.godot"
+
+          if [ ! -f "$PRESET_FILE" ]; then
+            echo "export_presets.cfg was not found."
+            exit 1
+          fi
+
+          # These options are only valid when Gradle Build is enabled.
+          sed -i '/^gradle_build\/min_sdk=/d' "$PRESET_FILE"
+          sed -i '/^gradle_build\/target_sdk=/d' "$PRESET_FILE"
+
+          # Remove any existing value before adding the correct Android setting.
+          sed -i \
+            '/^textures\/vram_compression\/import_etc2_astc=/d' \
+            "$PROJECT_FILE"
+
+          # Add ETC2/ASTC importing inside the existing rendering section.
+          sed -i \
+            '/^\[rendering\]$/a textures/vram_compression/import_etc2_astc=true' \
+            "$PROJECT_FILE"
+
+          echo "Updated export_presets.cfg:"
+          grep -E \
+            'use_gradle_build|min_sdk|target_sdk' \
+            "$PRESET_FILE" || true
+
+          echo "Updated Android texture setting:"
+          grep \
+            'textures/vram_compression/import_etc2_astc' \
+            "$PROJECT_FILE"
 
       - name: Set up Java 17
         uses: actions/setup-java@v4
@@ -52,18 +101,25 @@ jobs:
       - name: Install Android SDK packages
         shell: bash
         run: |
+          set -euo pipefail
+
           yes | sdkmanager --licenses >/dev/null || true
+
           sdkmanager \
             "platform-tools" \
             "platforms;android-35" \
-            "build-tools;35.0.0"
+            "build-tools;35.0.1"
 
       - name: Create Android debug keystore
         shell: bash
         run: |
+          set -euo pipefail
+
           mkdir -p "$HOME/.android"
+
           if [ ! -f "$HOME/.android/debug.keystore" ]; then
-            keytool -genkeypair -v \
+            keytool -genkeypair \
+              -v \
               -keystore "$HOME/.android/debug.keystore" \
               -storepass android \
               -alias androiddebugkey \
@@ -73,9 +129,15 @@ jobs:
               -validity 10000 \
               -dname "CN=Android Debug,O=Android,C=US"
           fi
-          echo "GODOT_ANDROID_KEYSTORE_DEBUG_PATH=$HOME/.android/debug.keystore" >> "$GITHUB_ENV"
-          echo "GODOT_ANDROID_KEYSTORE_DEBUG_USER=androiddebugkey" >> "$GITHUB_ENV"
-          echo "GODOT_ANDROID_KEYSTORE_DEBUG_PASSWORD=android" >> "$GITHUB_ENV"
+
+          echo "GODOT_ANDROID_KEYSTORE_DEBUG_PATH=$HOME/.android/debug.keystore" \
+            >> "$GITHUB_ENV"
+
+          echo "GODOT_ANDROID_KEYSTORE_DEBUG_USER=androiddebugkey" \
+            >> "$GITHUB_ENV"
+
+          echo "GODOT_ANDROID_KEYSTORE_DEBUG_PASSWORD=android" \
+            >> "$GITHUB_ENV"
 
       - name: Export Android debug APK
         uses: firebelley/godot-export@v7.0.0
@@ -93,12 +155,27 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          APK_FILE="$(find "$PROJECT_DIR" -type f -name '*.apk' | head -n 1)"
+
+          APK_FILE="$(find \
+            "$HOME/.local/share/godot/builds" \
+            "$PROJECT_DIR" \
+            -type f \
+            -name '*.apk' \
+            2>/dev/null | head -n 1)"
+
           if [ -z "$APK_FILE" ]; then
             echo "Godot finished without producing an APK."
+            echo "Searching available build folders:"
+            find "$HOME/.local/share/godot" "$PROJECT_DIR" \
+              -maxdepth 5 \
+              -type f \
+              2>/dev/null || true
             exit 1
           fi
+
           echo "APK_FILE=$APK_FILE" >> "$GITHUB_ENV"
+
+          echo "APK found:"
           ls -lh "$APK_FILE"
 
       - name: Upload APK artifact
