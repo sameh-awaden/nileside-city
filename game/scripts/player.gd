@@ -121,7 +121,8 @@ func _animate_body() -> void:
         shadow.modulate.a = 1.0
 
 func harvest_radius() -> float:
-    return 145.0 + float(GameState.sickle_level - 1) * 11.0
+    # Upgrades improve sickle count, speed and power without enlarging the collection area.
+    return 145.0
 
 func sickle_count() -> int:
     return mini(12, 2 + GameState.sickle_level)
