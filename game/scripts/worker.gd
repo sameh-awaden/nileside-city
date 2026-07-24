@@ -34,7 +34,7 @@ func _ready() -> void:
 
     _sprite = Sprite2D.new()
     _sprite.texture = load("res://assets/characters/hauler_baskets.png")
-    _sprite.scale = Vector2(0.38, 0.38)
+    _sprite.scale = Vector2(0.43, 0.43)
     _sprite.position = Vector2(0, -38)
     _sprite.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
     add_child(_sprite)
