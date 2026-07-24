@@ -26,7 +26,7 @@ func _ready() -> void:
     y_sort_enabled = true
 
     _shadow = Polygon2D.new()
-    _shadow.polygon = _ellipse_points(Vector2.ZERO, Vector2(25, 10), 20)
+    _shadow.polygon = _ellipse_points(Vector2.ZERO, Vector2(34, 13), 20)
     _shadow.color = Color(0.06, 0.03, 0.02, 0.28)
     _shadow.position = Vector2(0, 12)
     _shadow.z_index = -1
@@ -34,7 +34,7 @@ func _ready() -> void:
 
     _sprite = Sprite2D.new()
     _sprite.texture = load("res://assets/characters/hauler_baskets.png")
-    _sprite.scale = Vector2(0.27, 0.27)
+    _sprite.scale = Vector2(0.38, 0.38)
     _sprite.position = Vector2(0, -38)
     _sprite.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
     add_child(_sprite)
@@ -129,14 +129,14 @@ func _animate() -> void:
     var walking := state == "to_factory" or state == "to_warehouse"
     if walking:
         var bob := sin(_walk_time * 12.0)
-        _sprite.position.y = -38.0 + bob * 2.8
+        _sprite.position.y = -53.0 + bob * 2.8
         _sprite.rotation = sin(_walk_time * 6.0) * 0.022
-        _cargo_icon.position.y = -92.0 + bob * 2.8
+        _cargo_icon.position.y = -116.0 + bob * 2.8
         _shadow.scale.x = 1.0 - absf(bob) * 0.08
     else:
-        _sprite.position.y = -38.0 + sin(_walk_time * 2.0) * 1.0
+        _sprite.position.y = -53.0 + sin(_walk_time * 2.0) * 1.0
         _sprite.rotation = 0.0
-        _cargo_icon.position.y = -92.0
+        _cargo_icon.position.y = -116.0
         _shadow.scale = Vector2.ONE
 
 func _texture_for_resource(resource_name: String) -> Texture2D:
