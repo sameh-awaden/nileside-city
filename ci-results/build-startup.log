@@ -91,6 +91,34 @@ Completed load for: 'res://assets/resources/sickle.png' remapped 'res://assets/r
 Loading resource: res://assets/resources/coins.png remapped: res://assets/resources/coins.png
 Loading resource: res://.godot/imported/coins.png-4c0ce4d4bf72dd025a1ca3e73e297764.ctex remapped: res://.godot/imported/coins.png-4c0ce4d4bf72dd025a1ca3e73e297764.ctex
 Completed load for: 'res://assets/resources/coins.png' remapped 'res://assets/resources/coins.png' at thread -1
+ERROR: String formatting error: unsupported format character.
+   at: validated_evaluate (core/variant/variant_op.h:829)
+   GDScript backtrace (most recent call first):
+       [0] _refresh (res://scripts/admin_panel.gd:142)
+       [1] _ready (res://scripts/admin_panel.gd:65)
+       [2] _build_ui (res://scripts/main.gd:421)
+       [3] _ready (res://scripts/main.gd:62)
+ERROR: String formatting error: unsupported format character.
+   at: validated_evaluate (core/variant/variant_op.h:829)
+   GDScript backtrace (most recent call first):
+       [0] _refresh (res://scripts/admin_panel.gd:143)
+       [1] _ready (res://scripts/admin_panel.gd:65)
+       [2] _build_ui (res://scripts/main.gd:421)
+       [3] _ready (res://scripts/main.gd:62)
+ERROR: String formatting error: unsupported format character.
+   at: validated_evaluate (core/variant/variant_op.h:829)
+   GDScript backtrace (most recent call first):
+       [0] _refresh (res://scripts/admin_panel.gd:144)
+       [1] _ready (res://scripts/admin_panel.gd:65)
+       [2] _build_ui (res://scripts/main.gd:421)
+       [3] _ready (res://scripts/main.gd:62)
+ERROR: String formatting error: unsupported format character.
+   at: validated_evaluate (core/variant/variant_op.h:829)
+   GDScript backtrace (most recent call first):
+       [0] _refresh (res://scripts/admin_panel.gd:145)
+       [1] _ready (res://scripts/admin_panel.gd:65)
+       [2] _build_ui (res://scripts/main.gd:421)
+       [3] _ready (res://scripts/main.gd:62)
 Loading resource: res://assets/characters/hauler_baskets.png remapped: res://assets/characters/hauler_baskets.png
 Loading resource: res://.godot/imported/hauler_baskets.png-5758edf1ad2790e73c2c069bc1ac6540.ctex remapped: res://.godot/imported/hauler_baskets.png-5758edf1ad2790e73c2c069bc1ac6540.ctex
 Completed load for: 'res://assets/characters/hauler_baskets.png' remapped 'res://assets/characters/hauler_baskets.png' at thread -1
