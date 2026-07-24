@@ -80,8 +80,9 @@ func refresh() -> void:
             _label.text = display_name.to_upper()
     if path != "" and (_sprite.texture == null or _sprite.texture.resource_path != path):
         _sprite.texture = load(path)
-    _sprite.scale = Vector2.ONE * visual_scale
-    _sprite.position.y = -maxf(45.0, (_sprite.texture.get_height() if _sprite.texture else 180) * visual_scale * 0.37)
+    var rendered_scale := visual_scale * 1.55
+    _sprite.scale = Vector2.ONE * rendered_scale
+    _sprite.position.y = -maxf(45.0, (_sprite.texture.get_height() if _sprite.texture else 180) * rendered_scale * 0.37)
 
 func _on_input_event(_viewport: Node, event: InputEvent, _shape_idx: int) -> void:
     var activate := false
