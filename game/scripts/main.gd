@@ -278,7 +278,7 @@ func _spawn_customers() -> void:
     for config in configs:
         var sprite := Sprite2D.new()
         sprite.texture = load(config["texture"])
-        sprite.scale = Vector2(0.36, 0.36)
+        sprite.scale = Vector2(0.48, 0.48)
         sprite.position = config["position"]
         sprite.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
         static_buildings["market"].add_child(sprite)
