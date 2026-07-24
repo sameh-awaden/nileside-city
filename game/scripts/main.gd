@@ -10,6 +10,7 @@ const CONVEYOR_SCRIPT := preload("res://scripts/conveyor.gd")
 const WORKER_SCRIPT := preload("res://scripts/worker.gd")
 const STATIC_BUILDING_SCRIPT := preload("res://scripts/static_building.gd")
 const RESOURCE_NODE_SCRIPT := preload("res://scripts/resource_node.gd")
+const ADMIN_PANEL_SCRIPT := preload("res://scripts/admin_panel.gd")
 
 var world_root: Node2D
 var actors_root: Node2D
@@ -51,6 +52,8 @@ var selected_object: Variant = null
 var menu_panel: Panel
 var admin_tap_count: int = 0
 var admin_tap_deadline: float = 0.0
+var admin_panel: Panel
+var raw_resource_label: Label
 
 func _ready() -> void:
     process_mode = Node.PROCESS_MODE_ALWAYS
@@ -127,6 +130,7 @@ func _build_world() -> void:
 
     player = PLAYER_SCRIPT.new()
     player.name = "Player"
+    player.harvested.connect(_on_player_harvested)
     player.global_position = Vector2(-250, 720)
     actors_root.add_child(player)
 
@@ -405,6 +409,16 @@ func _build_ui() -> void:
     ui_root.add_child(save_toast)
 
     _build_menu_panel()
+
+    raw_resource_label = _create_label("", 21, Color("fff0bd"), HORIZONTAL_ALIGNMENT_CENTER)
+    raw_resource_label.position = Vector2(18, 250)
+    raw_resource_label.size = Vector2(780, 54)
+    raw_resource_label.add_theme_stylebox_override("normal", _panel_style(Color(0.025, 0.08, 0.10, 0.90), Color("b88a3d"), 2, 18))
+    ui_root.add_child(raw_resource_label)
+
+    admin_panel = ADMIN_PANEL_SCRIPT.new()
+    admin_panel.setup(self)
+    ui_root.add_child(admin_panel)
 
 func _build_menu_panel() -> void:
     menu_panel = Panel.new()
@@ -774,6 +788,11 @@ func _update_ui() -> void:
     timber_label.text = _compact_number(GameState.amount("timber"))
     blocks_label.text = _compact_number(GameState.amount("blocks"))
     bricks_label.text = _compact_number(GameState.amount("bricks"))
+    raw_resource_label.text = "WOOD %s    STONE %s    CLAY %s    PAPYRUS %s    DATES %s" % [
+        _compact_number(GameState.amount("wood")), _compact_number(GameState.amount("stone")),
+        _compact_number(GameState.amount("clay")), _compact_number(GameState.amount("papyrus")),
+        _compact_number(GameState.amount("dates"))
+    ]
     population_label.text = "POP %d/%d" % [GameState.population, GameState.population_cap]
     reserve_label.text = "FOOD %.1f min" % GameState.food_minutes()
     trade_label.text = "TRADE %s" % _compact_number(market_manager.total_sold if market_manager else 0.0)
@@ -903,11 +922,11 @@ func _on_city_badge_input(event: InputEvent) -> void:
         _open_dev_boost()
 
 func _open_dev_boost() -> void:
-    # Temporary native-build backdoor. Full admin panel comes in the next build.
-    GameState.add_coins(100000.0)
-    for key in GameState.resources.keys():
-        GameState.add_resource(key, 1000.0)
-    _show_save_toast("DEV BOOST APPLIED")
+    if admin_panel:
+        admin_panel.open_panel()
+
+func _on_player_harvested(_resource_name: String, _amount: float) -> void:
+    _update_ui()
 
 func _format_cost(cost: Dictionary) -> String:
     if cost.is_empty():
