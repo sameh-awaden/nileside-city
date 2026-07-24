@@ -2,239 +2,110 @@ name: Build Nileside City APK
 
 on:
   workflow_dispatch:
-
   push:
-    branches:
-      - main
+    branches: [main]
     paths:
-      - "nileside_city_godot_v0_1_fixed.zip"
-      - "nileside_city_godot_v0_1_fixed_v2.zip"
+      - "nileside_city_godot_v0_1_fixed_v3.zip"
       - ".github/workflows/build-apk.yml"
 
 permissions:
-  contents: read
+  contents: write
+
+concurrency:
+  group: nileside-apk-build
+  cancel-in-progress: true
 
 jobs:
   build-apk:
-    name: build-apk
     runs-on: ubuntu-latest
-    timeout-minutes: 45
-
+    timeout-minutes: 50
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Locate and extract Godot project
+      - name: Extract and validate project
         shell: bash
         run: |
           set -euo pipefail
-
-          ZIP_FILE=""
-
-          for candidate in \
-            "./nileside_city_godot_v0_1_fixed_v2.zip" \
-            "./nileside_city_godot_v0_1_fixed.zip"
-          do
-            if [ -f "$candidate" ]; then
-              echo "Checking ZIP: $candidate"
-
-              if unzip -tq "$candidate" >/dev/null 2>&1; then
-                ZIP_FILE="$candidate"
-                break
-              else
-                echo "Ignoring invalid ZIP: $candidate"
-              fi
-            fi
-          done
-
-          if [ -z "$ZIP_FILE" ]; then
-            echo "No valid repaired Nileside City ZIP was found."
-            echo
-            echo "Expected one of:"
-            echo "  nileside_city_godot_v0_1_fixed_v2.zip"
-            echo "  nileside_city_godot_v0_1_fixed.zip"
-            echo
-            echo "Repository ZIP files:"
-            find . -maxdepth 1 -type f -name "*.zip" -print
-            exit 1
-          fi
-
-          echo "Using ZIP: $ZIP_FILE"
-          unzip -t "$ZIP_FILE"
-
+          ZIP_FILE="./nileside_city_godot_v0_1_fixed_v3.zip"
+          test -f "$ZIP_FILE"
+          unzip -tq "$ZIP_FILE"
           rm -rf extracted
           mkdir -p extracted
-
           unzip -q -o "$ZIP_FILE" -d extracted
-
-          PROJECT_FILE="$(find extracted -type f -name "project.godot" | head -n 1)"
-
-          if [ -z "$PROJECT_FILE" ]; then
-            echo "project.godot was not found inside $ZIP_FILE."
-            exit 1
-          fi
-
+          PROJECT_FILE="$(find extracted -type f -name project.godot -print -quit)"
+          test -n "$PROJECT_FILE"
           PROJECT_DIR="$(dirname "$PROJECT_FILE")"
-
-          echo "ZIP_FILE=$ZIP_FILE" >> "$GITHUB_ENV"
+          test -f "$PROJECT_DIR/export_presets.cfg"
           echo "PROJECT_DIR=$PROJECT_DIR" >> "$GITHUB_ENV"
 
-          echo "Project directory: $PROJECT_DIR"
-          find "$PROJECT_DIR" -maxdepth 3 -type f | sort
-
-      - name: Fix GDScript and Android export configuration
+      - name: Normalize Android export configuration
         shell: bash
         run: |
           set -euo pipefail
-
           python3 <<'PY'
-          import os
-          import re
+          import os, re
           from pathlib import Path
-
-          project_dir = Path(os.environ["PROJECT_DIR"])
-
-          main_script = project_dir / "scripts" / "main.gd"
-          project_file = project_dir / "project.godot"
-          preset_file = project_dir / "export_presets.cfg"
-
-          for required_file in (main_script, project_file, preset_file):
-              if not required_file.exists():
-                  raise SystemExit(f"Required file was not found: {required_file}")
-
-          # Fix the remaining GDScript type-inference error.
-          main_content = main_script.read_text(encoding="utf-8")
-
-          old_cost_line = "var cost := factory.factory_upgrade_cost()"
-          new_cost_line = "var cost: Dictionary = factory.factory_upgrade_cost()"
-
-          if old_cost_line in main_content:
-              main_content = main_content.replace(old_cost_line, new_cost_line)
-              main_script.write_text(main_content, encoding="utf-8")
-              print("Patched factory upgrade cost type.")
-          elif new_cost_line in main_content:
-              print("Factory upgrade cost type was already patched.")
-          else:
-              raise SystemExit(
-                  "Could not find the expected factory_upgrade_cost line in main.gd."
-              )
-
-          # Fix export preset options that are invalid without Gradle.
-          preset_content = preset_file.read_text(encoding="utf-8")
-
-          filtered_preset_lines = []
-
-          for line in preset_content.splitlines():
-              stripped = line.strip()
-
-              if stripped.startswith("gradle_build/min_sdk="):
-                  print(f"Removing invalid preset option: {stripped}")
-                  continue
-
-              if stripped.startswith("gradle_build/target_sdk="):
-                  print(f"Removing invalid preset option: {stripped}")
-                  continue
-
-              filtered_preset_lines.append(line)
-
-          preset_content = "\n".join(filtered_preset_lines).rstrip() + "\n"
-
-          # Export scripts as text for easier debug builds.
-          if re.search(
-              r"^script_export_mode=.*$",
-              preset_content,
-              flags=re.MULTILINE
-          ):
-              preset_content = re.sub(
-                  r"^script_export_mode=.*$",
-                  "script_export_mode=0",
-                  preset_content,
-                  flags=re.MULTILINE
-              )
-
-          preset_file.write_text(preset_content, encoding="utf-8")
-
-          # Ensure Android-compatible rendering and ETC2/ASTC textures.
-          project_content = project_file.read_text(encoding="utf-8")
-
-          required_rendering_settings = {
-              'renderer/rendering_method':
-                  'renderer/rendering_method="gl_compatibility"',
-              'renderer/rendering_method.mobile':
-                  'renderer/rendering_method.mobile="gl_compatibility"',
-              'textures/vram_compression/import_etc2_astc':
-                  'textures/vram_compression/import_etc2_astc=true',
+          root = Path(os.environ["PROJECT_DIR"])
+          preset = root / "export_presets.cfg"
+          project = root / "project.godot"
+          p = preset.read_text(encoding="utf-8")
+          if 'name="Android Debug"' not in p or 'platform="Android"' not in p:
+              raise SystemExit("Android Debug export preset is missing")
+          p = "\n".join(line for line in p.splitlines()
+                          if not line.strip().startswith(("gradle_build/min_sdk=", "gradle_build/target_sdk="))) + "\n"
+          p = re.sub(r"^script_export_mode=.*$", "script_export_mode=0", p, flags=re.M)
+          preset.write_text(p, encoding="utf-8")
+          text = project.read_text(encoding="utf-8")
+          if "[rendering]" not in text:
+              text += "\n[rendering]\n"
+          required = {
+              "renderer/rendering_method": '"gl_compatibility"',
+              "renderer/rendering_method.mobile": '"gl_compatibility"',
+              "textures/vram_compression/import_etc2_astc": "true",
           }
-
-          if "[rendering]" not in project_content:
-              project_content = (
-                  project_content.rstrip()
-                  + "\n\n[rendering]\n"
-              )
-
-          rendering_section_start = project_content.index("[rendering]")
-          following_content = project_content[rendering_section_start + len("[rendering]"):]
-
-          next_section_match = re.search(r"\n\[[^\]]+\]", following_content)
-
-          if next_section_match:
-              rendering_section_end = (
-                  rendering_section_start
-                  + len("[rendering]")
-                  + next_section_match.start()
-              )
-          else:
-              rendering_section_end = len(project_content)
-
-          rendering_section = project_content[
-              rendering_section_start:rendering_section_end
-          ]
-
-          for setting_key, complete_line in required_rendering_settings.items():
-              setting_pattern = re.compile(
-                  rf"^{re.escape(setting_key)}=.*$",
-                  flags=re.MULTILINE
-              )
-
-              if setting_pattern.search(rendering_section):
-                  rendering_section = setting_pattern.sub(
-                      complete_line,
-                      rendering_section
-                  )
-              else:
-                  rendering_section = (
-                      rendering_section.rstrip()
-                      + "\n"
-                      + complete_line
-                      + "\n"
-                  )
-
-          project_content = (
-              project_content[:rendering_section_start]
-              + rendering_section
-              + project_content[rendering_section_end:]
-          )
-
-          project_file.write_text(project_content, encoding="utf-8")
-
-          print()
-          print("Patched main.gd lines:")
-          for line_number, line in enumerate(
-              main_script.read_text(encoding="utf-8").splitlines(),
-              start=1
-          ):
-              if "factory_upgrade_cost" in line:
-                  print(f"{line_number}: {line}")
-
-          print()
-          print("Android rendering settings:")
-          for line in project_file.read_text(encoding="utf-8").splitlines():
-              if (
-                  "renderer/rendering_method" in line
-                  or "import_etc2_astc" in line
-              ):
-                  print(line)
+          start = text.index("[rendering]")
+          match = re.search(r"\n\[[^\]]+\]", text[start + len("[rendering]"):])
+          end = len(text) if not match else start + len("[rendering]") + match.start()
+          section = text[start:end]
+          for key, value in required.items():
+              line = f"{key}={value}"
+              pattern = re.compile(rf"^{re.escape(key)}=.*$", re.M)
+              section = pattern.sub(line, section) if pattern.search(section) else section.rstrip() + "\n" + line + "\n"
+          project.write_text(text[:start] + section + text[end:], encoding="utf-8")
           PY
+
+      - name: Download Godot 4.7.1
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf godot-bin godot.zip
+          mkdir -p godot-bin
+          curl --location --fail --retry 3 --retry-delay 3 --output godot.zip \
+            "https://github.com/godotengine/godot-builds/releases/download/4.7.1-stable/Godot_v4.7.1-stable_linux.x86_64.zip"
+          unzip -q godot.zip -d godot-bin
+          GODOT_BIN="$(find godot-bin -maxdepth 1 -type f -name 'Godot*' -print -quit)"
+          test -n "$GODOT_BIN"
+          chmod +x "$GODOT_BIN"
+          echo "GODOT_BIN=$(realpath "$GODOT_BIN")" >> "$GITHUB_ENV"
+
+      - name: Import project assets
+        id: import
+        shell: bash
+        run: |
+          set -o pipefail
+          "$GODOT_BIN" --headless --editor --path "$PROJECT_DIR" --import --verbose 2>&1 | tee import.log
+
+      - name: Run pre-build startup test
+        id: startup
+        shell: bash
+        run: |
+          set -o pipefail
+          "$GODOT_BIN" --headless --path "$PROJECT_DIR" --quit-after 180 --verbose 2>&1 | tee startup.log
+          STATUS=${PIPESTATUS[0]}
+          PATTERN="SCRIPT ERROR|Parse Error|Compile Error|Failed to compile depended scripts|Failed to load script|Failed loading resource|Error loading resource|Invalid access|Invalid call|Nonexistent function|Cannot infer the type|Warning treated as error"
+          if grep -Eiq "$PATTERN" startup.log; then exit 1; fi
+          exit "$STATUS"
 
       - name: Set up Java 17
         uses: actions/setup-java@v4
@@ -249,50 +120,26 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-
           yes | sdkmanager --licenses >/dev/null || true
-
-          sdkmanager \
-            "platform-tools" \
-            "platforms;android-35" \
-            "build-tools;35.0.0"
-
-          echo "ANDROID_HOME=$ANDROID_HOME"
-          echo "ANDROID_SDK_ROOT=$ANDROID_SDK_ROOT"
-
-          sdkmanager --list_installed
+          sdkmanager "platform-tools" "platforms;android-35" "build-tools;35.0.0"
 
       - name: Create Android debug keystore
         shell: bash
         run: |
           set -euo pipefail
-
           mkdir -p "$HOME/.android"
-
           if [ ! -f "$HOME/.android/debug.keystore" ]; then
-            keytool \
-              -genkeypair \
-              -v \
-              -keystore "$HOME/.android/debug.keystore" \
-              -storepass android \
-              -alias androiddebugkey \
-              -keypass android \
-              -keyalg RSA \
-              -keysize 2048 \
-              -validity 10000 \
+            keytool -genkeypair -v -keystore "$HOME/.android/debug.keystore" \
+              -storepass android -alias androiddebugkey -keypass android \
+              -keyalg RSA -keysize 2048 -validity 10000 \
               -dname "CN=Android Debug,O=Android,C=US"
           fi
-
-          echo "GODOT_ANDROID_KEYSTORE_DEBUG_PATH=$HOME/.android/debug.keystore" \
-            >> "$GITHUB_ENV"
-
-          echo "GODOT_ANDROID_KEYSTORE_DEBUG_USER=androiddebugkey" \
-            >> "$GITHUB_ENV"
-
-          echo "GODOT_ANDROID_KEYSTORE_DEBUG_PASSWORD=android" \
-            >> "$GITHUB_ENV"
+          echo "GODOT_ANDROID_KEYSTORE_DEBUG_PATH=$HOME/.android/debug.keystore" >> "$GITHUB_ENV"
+          echo "GODOT_ANDROID_KEYSTORE_DEBUG_USER=androiddebugkey" >> "$GITHUB_ENV"
+          echo "GODOT_ANDROID_KEYSTORE_DEBUG_PASSWORD=android" >> "$GITHUB_ENV"
 
       - name: Export Android debug APK
+        id: export
         uses: firebelley/godot-export@v7.0.0
         with:
           godot_executable_download_url: https://github.com/godotengine/godot-builds/releases/download/4.7.1-stable/Godot_v4.7.1-stable_linux.x86_64.zip
@@ -305,43 +152,45 @@ jobs:
           verbose: true
 
       - name: Find exported APK
+        id: find_apk
         shell: bash
         run: |
           set -euo pipefail
-
-          APK_FILE="$(find \
-            "$HOME/.local/share/godot/builds" \
-            "$PROJECT_DIR" \
-            -type f \
-            -name "*.apk" \
-            2>/dev/null | head -n 1)"
-
-          if [ -z "$APK_FILE" ]; then
-            echo "Godot finished without producing an APK."
-            echo
-            echo "Files found in Godot build directories:"
-
-            find \
-              "$HOME/.local/share/godot" \
-              "$PROJECT_DIR" \
-              -maxdepth 7 \
-              -type f \
-              2>/dev/null | sort || true
-
-            exit 1
-          fi
-
-          echo "APK_FILE=$APK_FILE" >> "$GITHUB_ENV"
-
-          echo "APK found:"
+          APK_FILE="$(find "$PROJECT_DIR" "$HOME/.local/share/godot" -type f -name '*.apk' 2>/dev/null | head -n 1)"
+          test -n "$APK_FILE"
+          test -s "$APK_FILE"
+          echo "APK_FILE=$(realpath "$APK_FILE")" >> "$GITHUB_ENV"
           ls -lh "$APK_FILE"
 
-          file "$APK_FILE"
-
       - name: Upload APK artifact
+        id: artifact
         uses: actions/upload-artifact@v4
         with:
-          name: NilesideCity-Android-Debug
+          name: NilesideCity-Android-Debug-v3
           path: ${{ env.APK_FILE }}
           if-no-files-found: error
           retention-days: 30
+
+      - name: Publish build result
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p ci-results
+          {
+            echo "run_id=${{ github.run_id }}"
+            echo "commit=${{ github.sha }}"
+            echo "import_outcome=${{ steps.import.outcome }}"
+            echo "startup_outcome=${{ steps.startup.outcome }}"
+            echo "export_outcome=${{ steps.export.outcome }}"
+            echo "find_apk_outcome=${{ steps.find_apk.outcome }}"
+            echo "artifact_outcome=${{ steps.artifact.outcome }}"
+            echo "generated_at=$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          } > ci-results/build-status.txt
+          cp import.log ci-results/build-import.log 2>/dev/null || true
+          cp startup.log ci-results/build-startup.log 2>/dev/null || true
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add ci-results
+          git commit -m "Record APK build result" || exit 0
+          git push
