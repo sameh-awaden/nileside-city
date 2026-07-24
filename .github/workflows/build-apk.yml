@@ -1,4 +1,5 @@
 name: Build Nileside City APK
+# Source refresh: scaled world, fixed harvesting HUD, restored admin panel
 
 on:
   workflow_dispatch:
