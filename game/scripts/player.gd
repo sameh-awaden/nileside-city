@@ -3,7 +3,7 @@ class_name NilesidePlayer
 
 signal harvested(resource_name: String, amount: float)
 
-@export var move_speed: float = 330.0
+@export var move_speed: float = 410.0
 @export var world_bounds := Rect2(-2050.0, -2850.0, 4100.0, 5700.0)
 
 var active_pointer: int = -1
@@ -41,7 +41,7 @@ func _ready() -> void:
     body_sprite.hframes = 4
     body_sprite.frame = 1
     body_sprite.scale = Vector2(0.40, 0.40)
-    body_sprite.position = Vector2(0, -93)
+    body_sprite.position = Vector2(0, -79)
     body_sprite.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
     add_child(body_sprite)
 
