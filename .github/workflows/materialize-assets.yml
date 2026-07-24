@@ -1,0 +1,41 @@
+name: Materialize Generated Game Assets
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/materialize-assets.yml"
+      - "game/assets/characters/player_walk.png.b64.part*"
+
+permissions:
+  contents: write
+
+jobs:
+  materialize:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Decode and validate walk-cycle sprite
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat game/assets/characters/player_walk.png.b64.part1 \
+              game/assets/characters/player_walk.png.b64.part2 \
+              game/assets/characters/player_walk.png.b64.part3 \
+            | base64 --decode > game/assets/characters/player_walk.png
+          test -s game/assets/characters/player_walk.png
+          file game/assets/characters/player_walk.png | grep -q 'PNG image data'
+          rm -f game/assets/characters/player_walk.png.b64 \
+                game/assets/characters/player_walk.png.b64.part1 \
+                game/assets/characters/player_walk.png.b64.part2 \
+                game/assets/characters/player_walk.png.b64.part3
+      - name: Commit generated asset
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A game/assets/characters
+          git commit -m "Add animated Egyptian player walk cycle"
+          git push
