@@ -7,6 +7,7 @@ on:
     paths:
       - "nileside_city_godot_v0_1_fixed_v3.zip"
       - ".github/workflows/startup-test.yml"
+      - "game/**"
 
 permissions:
   contents: write
@@ -23,21 +24,15 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Extract and validate project
+      - name: Use checked-in Godot project
         shell: bash
         run: |
           set -euo pipefail
-          ZIP_FILE="./nileside_city_godot_v0_1_fixed_v3.zip"
-          test -f "$ZIP_FILE"
-          unzip -tq "$ZIP_FILE"
-          rm -rf extracted
-          mkdir -p extracted
-          unzip -q -o "$ZIP_FILE" -d extracted
-          PROJECT_FILE="$(find extracted -type f -name project.godot -print -quit)"
-          test -n "$PROJECT_FILE"
-          PROJECT_DIR="$(dirname "$PROJECT_FILE")"
+          PROJECT_DIR="game"
+          test -f "$PROJECT_DIR/project.godot"
           test -f "$PROJECT_DIR/scenes/main.tscn"
           test -f "$PROJECT_DIR/scripts/main.gd"
+          test -f "$PROJECT_DIR/assets/characters/player_walk.png"
           echo "PROJECT_DIR=$PROJECT_DIR" >> "$GITHUB_ENV"
 
       - name: Download Godot 4.7.1
