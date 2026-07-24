@@ -132,10 +132,10 @@ func _build_world() -> void:
 
     camera = Camera2D.new()
     camera.name = "GameCamera"
-    camera.position = Vector2(0, -145)
+    camera.position = Vector2(0, -110)
     camera.position_smoothing_enabled = true
     camera.position_smoothing_speed = 6.5
-    camera.zoom = Vector2(1.0, 1.0)
+    camera.zoom = Vector2(1.28, 1.28)
     camera.limit_left = -2200
     camera.limit_right = 2200
     camera.limit_top = -3000
