@@ -36,9 +36,11 @@ func _ready() -> void:
     add_child(shadow)
 
     body_sprite = Sprite2D.new()
-    body_sprite.texture = load("res://assets/characters/player.png")
-    body_sprite.scale = Vector2(0.32, 0.32)
-    body_sprite.position = Vector2(0, -58)
+    body_sprite.texture = load("res://assets/characters/player_walk.png")
+    body_sprite.hframes = 4
+    body_sprite.frame = 1
+    body_sprite.scale = Vector2(0.48, 0.48)
+    body_sprite.position = Vector2(0, -93)
     body_sprite.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
     add_child(body_sprite)
 
@@ -101,17 +103,19 @@ func _physics_process(delta: float) -> void:
 func _animate_body() -> void:
     var moving := velocity.length_squared() > 36.0
     if moving:
-        var bob := sin(_walk_time * 13.0)
-        body_sprite.position.y = -58.0 + bob * 3.6
-        body_sprite.rotation = sin(_walk_time * 6.5) * 0.018
-        body_sprite.scale.y = 0.32 + absf(bob) * 0.008
-        body_sprite.scale.x = (0.32 + absf(bob) * 0.004) * (1.0 if velocity.x >= -3.0 else -1.0)
-        shadow.scale.x = 1.0 - absf(bob) * 0.05
-        shadow.modulate.a = 0.82 - absf(bob) * 0.08
-    else:
-        body_sprite.position.y = -58.0 + sin(_walk_time * 2.1) * 1.6
+        body_sprite.frame = int(_walk_time * 8.5) % 4
+        body_sprite.flip_h = velocity.x < -3.0
+        body_sprite.position.y = -93.0 + sin(_walk_time * 17.0) * 1.4
         body_sprite.rotation = 0.0
-        body_sprite.scale = Vector2(0.32 * (1.0 if body_sprite.scale.x >= 0.0 else -1.0), 0.32)
+        body_sprite.scale = Vector2(0.48, 0.48)
+        var stride := absf(sin(_walk_time * 8.5 * PI))
+        shadow.scale = Vector2(1.0 - stride * 0.08, 1.0 - stride * 0.03)
+        shadow.modulate.a = 0.92 - stride * 0.10
+    else:
+        body_sprite.frame = 1
+        body_sprite.position.y = -93.0 + sin(_walk_time * 2.1) * 1.2
+        body_sprite.rotation = 0.0
+        body_sprite.scale = Vector2(0.48, 0.48)
         shadow.scale = Vector2.ONE
         shadow.modulate.a = 1.0
 
