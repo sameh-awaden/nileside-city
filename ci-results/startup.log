@@ -82,9 +82,9 @@ Completed load for: 'res://assets/characters/customer2.png' remapped 'res://asse
 Loading resource: res://assets/characters/customer3.png remapped: res://assets/characters/customer3.png
 Loading resource: res://.godot/imported/customer3.png-d3382ce2645c0586cda403901d811495.ctex remapped: res://.godot/imported/customer3.png-d3382ce2645c0586cda403901d811495.ctex
 Completed load for: 'res://assets/characters/customer3.png' remapped 'res://assets/characters/customer3.png' at thread -1
-Loading resource: res://assets/characters/player.png remapped: res://assets/characters/player.png
-Loading resource: res://.godot/imported/player.png-25395c886dc76b9cff83de98a847a841.ctex remapped: res://.godot/imported/player.png-25395c886dc76b9cff83de98a847a841.ctex
-Completed load for: 'res://assets/characters/player.png' remapped 'res://assets/characters/player.png' at thread -1
+Loading resource: res://assets/characters/player_walk.png remapped: res://assets/characters/player_walk.png
+Loading resource: res://.godot/imported/player_walk.png-d859f324b180e620b35176465490dc5b.ctex remapped: res://.godot/imported/player_walk.png-d859f324b180e620b35176465490dc5b.ctex
+Completed load for: 'res://assets/characters/player_walk.png' remapped 'res://assets/characters/player_walk.png' at thread -1
 Loading resource: res://assets/resources/sickle.png remapped: res://assets/resources/sickle.png
 Loading resource: res://.godot/imported/sickle.png-6de2a6f644e4962a0144273e01bed409.ctex remapped: res://.godot/imported/sickle.png-6de2a6f644e4962a0144273e01bed409.ctex
 Completed load for: 'res://assets/resources/sickle.png' remapped 'res://assets/resources/sickle.png' at thread -1
