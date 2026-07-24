@@ -54,8 +54,9 @@ func _ready() -> void:
     _sprite = Sprite2D.new()
     if texture_path != "":
         _sprite.texture = load(texture_path)
-    _sprite.scale = Vector2.ONE * visual_scale
-    _sprite.position.y = -maxf(40.0, (_sprite.texture.get_height() if _sprite.texture else 150) * visual_scale * 0.35)
+    var rendered_scale := visual_scale * 1.50
+    _sprite.scale = Vector2.ONE * rendered_scale
+    _sprite.position.y = -maxf(40.0, (_sprite.texture.get_height() if _sprite.texture else 150) * rendered_scale * 0.35)
     _sprite.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
     add_child(_sprite)
 
