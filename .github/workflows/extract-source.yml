@@ -1,0 +1,45 @@
+name: Extract Nileside Godot Source
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/extract-source.yml"
+      - "nileside_city_godot_v0_1_fixed_v3.zip"
+
+permissions:
+  contents: write
+
+jobs:
+  extract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Extract project into source directory
+        shell: bash
+        run: |
+          set -euo pipefail
+          ZIP_FILE="nileside_city_godot_v0_1_fixed_v3.zip"
+          unzip -tq "$ZIP_FILE"
+          rm -rf source-tmp game
+          mkdir source-tmp
+          unzip -q "$ZIP_FILE" -d source-tmp
+          PROJECT_FILE="$(find source-tmp -type f -name project.godot -print -quit)"
+          test -n "$PROJECT_FILE"
+          PROJECT_DIR="$(dirname "$PROJECT_FILE")"
+          mkdir game
+          cp -a "$PROJECT_DIR"/. game/
+          rm -rf game/.godot game/builds
+          find game -type f -name '*.import' -delete
+          test -f game/project.godot
+          test -f game/scripts/main.gd
+      - name: Commit extracted source
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add game
+          git commit -m "Extract Godot project source" || exit 0
+          git push
