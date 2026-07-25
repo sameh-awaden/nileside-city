@@ -9,7 +9,7 @@ var stall_position := Vector2.ZERO
 var exit_position := Vector2.ZERO
 var state := "queue"
 var pause_left := 0.8
-var speed := 92.0
+var speed := 76.0
 var walk_time := 0.0
 var sprite: Sprite2D
 var label: Label
@@ -74,7 +74,9 @@ func _process(delta: float) -> void:
                 state = "leave"
         "leave":
             if _walk_to(exit_position, delta):
-                position = queue_position
+                state = "return"
+        "return":
+            if _walk_to(queue_position, delta):
                 state = "queue"
                 pause_left = 0.7 + float(resource_name.length() % 4) * 0.22
 
@@ -89,8 +91,8 @@ func _walk_to(target: Vector2, delta: float) -> bool:
     position += direction * speed * delta
     sprite.flip_h = direction.x < 0.0
     var stride := sin(walk_time * 10.0)
-    sprite.position.y = -61.0 + absf(stride) * -2.0
-    sprite.rotation = stride * 0.018
+    sprite.position.y = -61.0 - absf(stride) * 1.1
+    sprite.rotation = stride * 0.010
     shadow.scale.x = 1.0 - absf(stride) * 0.06
     return false
 
