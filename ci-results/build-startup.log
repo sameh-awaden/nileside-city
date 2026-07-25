@@ -16,6 +16,12 @@ Loading resource: res://scenes/main.tscn remapped: res://scenes/main.tscn
 Loading resource: res://scripts/main.gd remapped: res://scripts/main.gd
 Completed load for: 'res://scripts/main.gd' remapped 'res://scripts/main.gd' at thread -1
 Completed load for: 'res://scenes/main.tscn' remapped 'res://scenes/main.tscn' at thread -1
+Loading resource: res://assets/terrain/sand_texture.webp remapped: res://assets/terrain/sand_texture.webp
+Loading resource: res://.godot/imported/sand_texture.webp-1c90f3ab59b51a02e9a39b94680f78d2.ctex remapped: res://.godot/imported/sand_texture.webp-1c90f3ab59b51a02e9a39b94680f78d2.ctex
+Completed load for: 'res://assets/terrain/sand_texture.webp' remapped 'res://assets/terrain/sand_texture.webp' at thread -1
+Loading resource: res://assets/terrain/road_texture.webp remapped: res://assets/terrain/road_texture.webp
+Loading resource: res://.godot/imported/road_texture.webp-3f2f219f958f5976b5e32d8ea19c2b8c.ctex remapped: res://.godot/imported/road_texture.webp-3f2f219f958f5976b5e32d8ea19c2b8c.ctex
+Completed load for: 'res://assets/terrain/road_texture.webp' remapped 'res://assets/terrain/road_texture.webp' at thread -1
 Loading resource: res://assets/buildings/palace1.png remapped: res://assets/buildings/palace1.png
 Loading resource: res://.godot/imported/palace1.png-0009d0176fbbac949955545423d52f0f.ctex remapped: res://.godot/imported/palace1.png-0009d0176fbbac949955545423d52f0f.ctex
 Completed load for: 'res://assets/buildings/palace1.png' remapped 'res://assets/buildings/palace1.png' at thread -1
@@ -82,43 +88,15 @@ Completed load for: 'res://assets/characters/customer2.png' remapped 'res://asse
 Loading resource: res://assets/characters/customer3.png remapped: res://assets/characters/customer3.png
 Loading resource: res://.godot/imported/customer3.png-d3382ce2645c0586cda403901d811495.ctex remapped: res://.godot/imported/customer3.png-d3382ce2645c0586cda403901d811495.ctex
 Completed load for: 'res://assets/characters/customer3.png' remapped 'res://assets/characters/customer3.png' at thread -1
-Loading resource: res://assets/characters/player_walk.png remapped: res://assets/characters/player_walk.png
-Loading resource: res://.godot/imported/player_walk.png-d859f324b180e620b35176465490dc5b.ctex remapped: res://.godot/imported/player_walk.png-d859f324b180e620b35176465490dc5b.ctex
-Completed load for: 'res://assets/characters/player_walk.png' remapped 'res://assets/characters/player_walk.png' at thread -1
+Loading resource: res://assets/characters/player_walk_v2.webp remapped: res://assets/characters/player_walk_v2.webp
+Loading resource: res://.godot/imported/player_walk_v2.webp-baa38606bb493f488d16249074e848b1.ctex remapped: res://.godot/imported/player_walk_v2.webp-baa38606bb493f488d16249074e848b1.ctex
+Completed load for: 'res://assets/characters/player_walk_v2.webp' remapped 'res://assets/characters/player_walk_v2.webp' at thread -1
 Loading resource: res://assets/resources/sickle.png remapped: res://assets/resources/sickle.png
 Loading resource: res://.godot/imported/sickle.png-6de2a6f644e4962a0144273e01bed409.ctex remapped: res://.godot/imported/sickle.png-6de2a6f644e4962a0144273e01bed409.ctex
 Completed load for: 'res://assets/resources/sickle.png' remapped 'res://assets/resources/sickle.png' at thread -1
 Loading resource: res://assets/resources/coins.png remapped: res://assets/resources/coins.png
 Loading resource: res://.godot/imported/coins.png-4c0ce4d4bf72dd025a1ca3e73e297764.ctex remapped: res://.godot/imported/coins.png-4c0ce4d4bf72dd025a1ca3e73e297764.ctex
 Completed load for: 'res://assets/resources/coins.png' remapped 'res://assets/resources/coins.png' at thread -1
-ERROR: String formatting error: unsupported format character.
-   at: validated_evaluate (core/variant/variant_op.h:829)
-   GDScript backtrace (most recent call first):
-       [0] _refresh (res://scripts/admin_panel.gd:142)
-       [1] _ready (res://scripts/admin_panel.gd:65)
-       [2] _build_ui (res://scripts/main.gd:421)
-       [3] _ready (res://scripts/main.gd:62)
-ERROR: String formatting error: unsupported format character.
-   at: validated_evaluate (core/variant/variant_op.h:829)
-   GDScript backtrace (most recent call first):
-       [0] _refresh (res://scripts/admin_panel.gd:143)
-       [1] _ready (res://scripts/admin_panel.gd:65)
-       [2] _build_ui (res://scripts/main.gd:421)
-       [3] _ready (res://scripts/main.gd:62)
-ERROR: String formatting error: unsupported format character.
-   at: validated_evaluate (core/variant/variant_op.h:829)
-   GDScript backtrace (most recent call first):
-       [0] _refresh (res://scripts/admin_panel.gd:144)
-       [1] _ready (res://scripts/admin_panel.gd:65)
-       [2] _build_ui (res://scripts/main.gd:421)
-       [3] _ready (res://scripts/main.gd:62)
-ERROR: String formatting error: unsupported format character.
-   at: validated_evaluate (core/variant/variant_op.h:829)
-   GDScript backtrace (most recent call first):
-       [0] _refresh (res://scripts/admin_panel.gd:145)
-       [1] _ready (res://scripts/admin_panel.gd:65)
-       [2] _build_ui (res://scripts/main.gd:421)
-       [3] _ready (res://scripts/main.gd:62)
 Loading resource: res://assets/characters/hauler_baskets.png remapped: res://assets/characters/hauler_baskets.png
 Loading resource: res://.godot/imported/hauler_baskets.png-5758edf1ad2790e73c2c069bc1ac6540.ctex remapped: res://.godot/imported/hauler_baskets.png-5758edf1ad2790e73c2c069bc1ac6540.ctex
 Completed load for: 'res://assets/characters/hauler_baskets.png' remapped 'res://assets/characters/hauler_baskets.png' at thread -1
