@@ -1,5 +1,5 @@
 name: Build Nileside City APK
-# Source refresh: full approved style-board asset replacement
+# Source refresh: proportional scene framing, saved pinch zoom, and reliable result publishing
 
 on:
   workflow_dispatch:
@@ -189,4 +189,12 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add ci-results
           git commit -m "Record APK build result" || exit 0
-          git push
+          for attempt in 1 2 3; do
+            git pull --rebase origin main
+            if git push origin HEAD:main; then
+              exit 0
+            fi
+            sleep $((attempt * 2))
+          done
+          echo "Could not publish build result after three attempts."
+          exit 1
