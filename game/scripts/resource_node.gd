@@ -43,17 +43,6 @@ func _ready() -> void:
         var footprint_x: float = clampf(float(_sprite.texture.get_width()) * visual_scale * 1.50 * 0.27, 30.0, 82.0)
         _shadow.polygon = _ellipse_points(Vector2.ZERO, Vector2(footprint_x, footprint_x * 0.30), 24)
         _shadow.position = Vector2(7, 3)
-    match resource_type:
-        "stone":
-            _sprite.modulate = Color(0.78, 0.82, 0.88, 1.0)
-        "grain":
-            _sprite.modulate = Color(1.0, 0.82, 0.34, 1.0)
-        "clay":
-            _sprite.modulate = Color(0.82, 0.40, 0.26, 1.0)
-        "papyrus":
-            _sprite.modulate = Color(0.62, 0.90, 0.58, 1.0)
-        "dates":
-            _sprite.modulate = Color(1.0, 0.72, 0.45, 1.0)
     add_child(_sprite)
     queue_redraw()
 
