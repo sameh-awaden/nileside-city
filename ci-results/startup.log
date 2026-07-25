@@ -22,36 +22,36 @@ Completed load for: 'res://assets/terrain/sand_texture.webp' remapped 'res://ass
 Loading resource: res://assets/terrain/road_texture.webp remapped: res://assets/terrain/road_texture.webp
 Loading resource: res://.godot/imported/road_texture.webp-3f2f219f958f5976b5e32d8ea19c2b8c.ctex remapped: res://.godot/imported/road_texture.webp-3f2f219f958f5976b5e32d8ea19c2b8c.ctex
 Completed load for: 'res://assets/terrain/road_texture.webp' remapped 'res://assets/terrain/road_texture.webp' at thread -1
-Loading resource: res://assets/buildings/palace1.png remapped: res://assets/buildings/palace1.png
-Loading resource: res://.godot/imported/palace1.png-0009d0176fbbac949955545423d52f0f.ctex remapped: res://.godot/imported/palace1.png-0009d0176fbbac949955545423d52f0f.ctex
-Completed load for: 'res://assets/buildings/palace1.png' remapped 'res://assets/buildings/palace1.png' at thread -1
-Loading resource: res://assets/buildings/market1.png remapped: res://assets/buildings/market1.png
-Loading resource: res://.godot/imported/market1.png-a28dbe768a04d3e16b85600f7bce90f4.ctex remapped: res://.godot/imported/market1.png-a28dbe768a04d3e16b85600f7bce90f4.ctex
-Completed load for: 'res://assets/buildings/market1.png' remapped 'res://assets/buildings/market1.png' at thread -1
-Loading resource: res://assets/buildings/warehouse.png remapped: res://assets/buildings/warehouse.png
-Loading resource: res://.godot/imported/warehouse.png-ca9fe9f1803e27afcc536873f4263ebe.ctex remapped: res://.godot/imported/warehouse.png-ca9fe9f1803e27afcc536873f4263ebe.ctex
-Completed load for: 'res://assets/buildings/warehouse.png' remapped 'res://assets/buildings/warehouse.png' at thread -1
-Loading resource: res://assets/buildings/logistics.png remapped: res://assets/buildings/logistics.png
-Loading resource: res://.godot/imported/logistics.png-bc4b751be8fe08cdde2eb61d71fd3dd4.ctex remapped: res://.godot/imported/logistics.png-bc4b751be8fe08cdde2eb61d71fd3dd4.ctex
-Completed load for: 'res://assets/buildings/logistics.png' remapped 'res://assets/buildings/logistics.png' at thread -1
-Loading resource: res://assets/buildings/sawmill.png remapped: res://assets/buildings/sawmill.png
-Loading resource: res://.godot/imported/sawmill.png-012a5758c321e14045188b1dac383ed7.ctex remapped: res://.godot/imported/sawmill.png-012a5758c321e14045188b1dac383ed7.ctex
-Completed load for: 'res://assets/buildings/sawmill.png' remapped 'res://assets/buildings/sawmill.png' at thread -1
-Loading resource: res://assets/buildings/bakery.png remapped: res://assets/buildings/bakery.png
-Loading resource: res://.godot/imported/bakery.png-3d45622d742bf7c5fa1769ef91160bf2.ctex remapped: res://.godot/imported/bakery.png-3d45622d742bf7c5fa1769ef91160bf2.ctex
-Completed load for: 'res://assets/buildings/bakery.png' remapped 'res://assets/buildings/bakery.png' at thread -1
-Loading resource: res://assets/buildings/masonry.png remapped: res://assets/buildings/masonry.png
-Loading resource: res://.godot/imported/masonry.png-ae43b97663907a727acfb45dcd27daf9.ctex remapped: res://.godot/imported/masonry.png-ae43b97663907a727acfb45dcd27daf9.ctex
-Completed load for: 'res://assets/buildings/masonry.png' remapped 'res://assets/buildings/masonry.png' at thread -1
-Loading resource: res://assets/buildings/kiln.png remapped: res://assets/buildings/kiln.png
-Loading resource: res://.godot/imported/kiln.png-dc2bf93f78de8de8d77da3c68e87a3b5.ctex remapped: res://.godot/imported/kiln.png-dc2bf93f78de8de8d77da3c68e87a3b5.ctex
-Completed load for: 'res://assets/buildings/kiln.png' remapped 'res://assets/buildings/kiln.png' at thread -1
-Loading resource: res://assets/buildings/pottery.png remapped: res://assets/buildings/pottery.png
-Loading resource: res://.godot/imported/pottery.png-bc6ec323c41c88fa807d134eedd19120.ctex remapped: res://.godot/imported/pottery.png-bc6ec323c41c88fa807d134eedd19120.ctex
-Completed load for: 'res://assets/buildings/pottery.png' remapped 'res://assets/buildings/pottery.png' at thread -1
-Loading resource: res://assets/buildings/papyrus_workshop.png remapped: res://assets/buildings/papyrus_workshop.png
-Loading resource: res://.godot/imported/papyrus_workshop.png-cceb2b1331e84a66540dbc9ad4e81030.ctex remapped: res://.godot/imported/papyrus_workshop.png-cceb2b1331e84a66540dbc9ad4e81030.ctex
-Completed load for: 'res://assets/buildings/papyrus_workshop.png' remapped 'res://assets/buildings/papyrus_workshop.png' at thread -1
+Loading resource: res://assets/v2/palace.webp remapped: res://assets/v2/palace.webp
+Loading resource: res://.godot/imported/palace.webp-460dcbf3809bc568ae3e7e2f71442381.ctex remapped: res://.godot/imported/palace.webp-460dcbf3809bc568ae3e7e2f71442381.ctex
+Completed load for: 'res://assets/v2/palace.webp' remapped 'res://assets/v2/palace.webp' at thread -1
+Loading resource: res://assets/v2/market.webp remapped: res://assets/v2/market.webp
+Loading resource: res://.godot/imported/market.webp-41bee22c259d8d474988404ffd13bc2f.ctex remapped: res://.godot/imported/market.webp-41bee22c259d8d474988404ffd13bc2f.ctex
+Completed load for: 'res://assets/v2/market.webp' remapped 'res://assets/v2/market.webp' at thread -1
+Loading resource: res://assets/v2/warehouse.webp remapped: res://assets/v2/warehouse.webp
+Loading resource: res://.godot/imported/warehouse.webp-d24de5d3a8084766b91982249fd04c26.ctex remapped: res://.godot/imported/warehouse.webp-d24de5d3a8084766b91982249fd04c26.ctex
+Completed load for: 'res://assets/v2/warehouse.webp' remapped 'res://assets/v2/warehouse.webp' at thread -1
+Loading resource: res://assets/v2/logistics.webp remapped: res://assets/v2/logistics.webp
+Loading resource: res://.godot/imported/logistics.webp-fbb9b89ca1144f277eb6677e47216960.ctex remapped: res://.godot/imported/logistics.webp-fbb9b89ca1144f277eb6677e47216960.ctex
+Completed load for: 'res://assets/v2/logistics.webp' remapped 'res://assets/v2/logistics.webp' at thread -1
+Loading resource: res://assets/v2/sawmill.webp remapped: res://assets/v2/sawmill.webp
+Loading resource: res://.godot/imported/sawmill.webp-159420d18f9225e4e40b226403e54298.ctex remapped: res://.godot/imported/sawmill.webp-159420d18f9225e4e40b226403e54298.ctex
+Completed load for: 'res://assets/v2/sawmill.webp' remapped 'res://assets/v2/sawmill.webp' at thread -1
+Loading resource: res://assets/v2/bakery.webp remapped: res://assets/v2/bakery.webp
+Loading resource: res://.godot/imported/bakery.webp-64210e67d0b8cd28951b9ed526354f38.ctex remapped: res://.godot/imported/bakery.webp-64210e67d0b8cd28951b9ed526354f38.ctex
+Completed load for: 'res://assets/v2/bakery.webp' remapped 'res://assets/v2/bakery.webp' at thread -1
+Loading resource: res://assets/v2/masonry.webp remapped: res://assets/v2/masonry.webp
+Loading resource: res://.godot/imported/masonry.webp-2084c8881beb5096c043d726c44a5b3d.ctex remapped: res://.godot/imported/masonry.webp-2084c8881beb5096c043d726c44a5b3d.ctex
+Completed load for: 'res://assets/v2/masonry.webp' remapped 'res://assets/v2/masonry.webp' at thread -1
+Loading resource: res://assets/v2/kiln.webp remapped: res://assets/v2/kiln.webp
+Loading resource: res://.godot/imported/kiln.webp-670385ad4d7033f10aca6b079b3fa90f.ctex remapped: res://.godot/imported/kiln.webp-670385ad4d7033f10aca6b079b3fa90f.ctex
+Completed load for: 'res://assets/v2/kiln.webp' remapped 'res://assets/v2/kiln.webp' at thread -1
+Loading resource: res://assets/v2/pottery.webp remapped: res://assets/v2/pottery.webp
+Loading resource: res://.godot/imported/pottery.webp-bb68c354824bc5c66c4a761882705d2b.ctex remapped: res://.godot/imported/pottery.webp-bb68c354824bc5c66c4a761882705d2b.ctex
+Completed load for: 'res://assets/v2/pottery.webp' remapped 'res://assets/v2/pottery.webp' at thread -1
+Loading resource: res://assets/v2/scribe.webp remapped: res://assets/v2/scribe.webp
+Loading resource: res://.godot/imported/scribe.webp-a0cfa1684a8b584d1c5092e8b611ebd7.ctex remapped: res://.godot/imported/scribe.webp-a0cfa1684a8b584d1c5092e8b611ebd7.ctex
+Completed load for: 'res://assets/v2/scribe.webp' remapped 'res://assets/v2/scribe.webp' at thread -1
 Loading resource: res://assets/resources/timber.png remapped: res://assets/resources/timber.png
 Loading resource: res://.godot/imported/timber.png-26b66b04065f0d331464ecbef62b42c2.ctex remapped: res://.godot/imported/timber.png-26b66b04065f0d331464ecbef62b42c2.ctex
 Completed load for: 'res://assets/resources/timber.png' remapped 'res://assets/resources/timber.png' at thread -1
@@ -70,15 +70,27 @@ Completed load for: 'res://assets/resources/pottery_icon.png' remapped 'res://as
 Loading resource: res://assets/resources/scrolls.png remapped: res://assets/resources/scrolls.png
 Loading resource: res://.godot/imported/scrolls.png-f2ead6c9cb36b47abcaa4f7d61113d98.ctex remapped: res://.godot/imported/scrolls.png-f2ead6c9cb36b47abcaa4f7d61113d98.ctex
 Completed load for: 'res://assets/resources/scrolls.png' remapped 'res://assets/resources/scrolls.png' at thread -1
+Loading resource: res://assets/v2/palm.webp remapped: res://assets/v2/palm.webp
+Loading resource: res://.godot/imported/palm.webp-71aef929fe45e15c7792e49e22328b5b.ctex remapped: res://.godot/imported/palm.webp-71aef929fe45e15c7792e49e22328b5b.ctex
+Completed load for: 'res://assets/v2/palm.webp' remapped 'res://assets/v2/palm.webp' at thread -1
 Loading resource: res://assets/resources/palm.png remapped: res://assets/resources/palm.png
 Loading resource: res://.godot/imported/palm.png-a881ba56b2cee85422efa09d53cf6eaa.ctex remapped: res://.godot/imported/palm.png-a881ba56b2cee85422efa09d53cf6eaa.ctex
 Completed load for: 'res://assets/resources/palm.png' remapped 'res://assets/resources/palm.png' at thread -1
-Loading resource: res://assets/resources/reed.png remapped: res://assets/resources/reed.png
-Loading resource: res://.godot/imported/reed.png-8d9f4d21ba3adf524cdad40c8a3c4828.ctex remapped: res://.godot/imported/reed.png-8d9f4d21ba3adf524cdad40c8a3c4828.ctex
-Completed load for: 'res://assets/resources/reed.png' remapped 'res://assets/resources/reed.png' at thread -1
-Loading resource: res://assets/resources/stock_clay.png remapped: res://assets/resources/stock_clay.png
-Loading resource: res://.godot/imported/stock_clay.png-c4d7e56edd16dadc5a569fec838589c8.ctex remapped: res://.godot/imported/stock_clay.png-c4d7e56edd16dadc5a569fec838589c8.ctex
-Completed load for: 'res://assets/resources/stock_clay.png' remapped 'res://assets/resources/stock_clay.png' at thread -1
+Loading resource: res://assets/v2/stone.webp remapped: res://assets/v2/stone.webp
+Loading resource: res://.godot/imported/stone.webp-7f8ffe8ed9d285644e83eff4afb046c6.ctex remapped: res://.godot/imported/stone.webp-7f8ffe8ed9d285644e83eff4afb046c6.ctex
+Completed load for: 'res://assets/v2/stone.webp' remapped 'res://assets/v2/stone.webp' at thread -1
+Loading resource: res://assets/v2/grain.webp remapped: res://assets/v2/grain.webp
+Loading resource: res://.godot/imported/grain.webp-9437dd2627514ab6a99a03c1913ee5d3.ctex remapped: res://.godot/imported/grain.webp-9437dd2627514ab6a99a03c1913ee5d3.ctex
+Completed load for: 'res://assets/v2/grain.webp' remapped 'res://assets/v2/grain.webp' at thread -1
+Loading resource: res://assets/v2/raw_clay.webp remapped: res://assets/v2/raw_clay.webp
+Loading resource: res://.godot/imported/raw_clay.webp-80bb6401f17c24f065b608b8c0fc0da5.ctex remapped: res://.godot/imported/raw_clay.webp-80bb6401f17c24f065b608b8c0fc0da5.ctex
+Completed load for: 'res://assets/v2/raw_clay.webp' remapped 'res://assets/v2/raw_clay.webp' at thread -1
+Loading resource: res://assets/v2/papyrus.webp remapped: res://assets/v2/papyrus.webp
+Loading resource: res://.godot/imported/papyrus.webp-ba9c6485d2cf95a2c339da63c3bd2992.ctex remapped: res://.godot/imported/papyrus.webp-ba9c6485d2cf95a2c339da63c3bd2992.ctex
+Completed load for: 'res://assets/v2/papyrus.webp' remapped 'res://assets/v2/papyrus.webp' at thread -1
+Loading resource: res://assets/v2/date_palm.webp remapped: res://assets/v2/date_palm.webp
+Loading resource: res://.godot/imported/date_palm.webp-21ef15e44deafe6fca9bdf30a849c8a1.ctex remapped: res://.godot/imported/date_palm.webp-21ef15e44deafe6fca9bdf30a849c8a1.ctex
+Completed load for: 'res://assets/v2/date_palm.webp' remapped 'res://assets/v2/date_palm.webp' at thread -1
 Loading resource: res://assets/characters/customer1.png remapped: res://assets/characters/customer1.png
 Loading resource: res://.godot/imported/customer1.png-7612a859f1da8e186bb5ce68af77502f.ctex remapped: res://.godot/imported/customer1.png-7612a859f1da8e186bb5ce68af77502f.ctex
 Completed load for: 'res://assets/characters/customer1.png' remapped 'res://assets/characters/customer1.png' at thread -1
