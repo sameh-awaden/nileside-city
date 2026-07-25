@@ -10,6 +10,9 @@ var active_pointer: int = -1
 var pointer_origin := Vector2.ZERO
 var pointer_position := Vector2.ZERO
 var input_vector := Vector2.ZERO
+var touch_points: Dictionary = {}
+var pinch_last_distance: float = 0.0
+var _pinching := false
 var _mouse_dragging := false
 var _walk_time: float = 0.0
 var _harvest_time: float = 0.0
@@ -24,6 +27,9 @@ var sickles: Array[Sprite2D] = []
 
 const WALK_FRAMES: Array[int] = [0, 1, 2, 3, 2, 1]
 const TYPE_ORDER := ["wood", "stone", "grain", "clay", "papyrus", "dates"]
+const MIN_CAMERA_ZOOM := 1.0
+const MAX_CAMERA_ZOOM := 2.15
+const ZOOM_STEP := 1.12
 
 func _ready() -> void:
     z_index = 20
@@ -56,33 +62,91 @@ func _ready() -> void:
 
 func _unhandled_input(event: InputEvent) -> void:
     if event is InputEventScreenTouch:
-        if event.pressed and active_pointer == -1:
-            active_pointer = event.index
-            pointer_origin = event.position
-            pointer_position = event.position
+        if event.pressed:
+            touch_points[event.index] = event.position
+            if touch_points.size() >= 2:
+                _pinching = true
+                active_pointer = -1
+                input_vector = Vector2.ZERO
+                pinch_last_distance = _current_pinch_distance()
+            elif not _pinching:
+                active_pointer = event.index
+                pointer_origin = event.position
+                pointer_position = event.position
+                input_vector = Vector2.ZERO
+        else:
+            touch_points.erase(event.index)
             input_vector = Vector2.ZERO
-            get_viewport().set_input_as_handled()
-        elif not event.pressed and event.index == active_pointer:
-            active_pointer = -1
-            input_vector = Vector2.ZERO
-            get_viewport().set_input_as_handled()
-
-    elif event is InputEventScreenDrag and event.index == active_pointer:
-        pointer_position = event.position
-        input_vector = ((pointer_position - pointer_origin) / 95.0).limit_length(1.0)
+            if _pinching:
+                pinch_last_distance = 0.0
+                if touch_points.is_empty():
+                    _pinching = false
+                    active_pointer = -1
+            elif event.index == active_pointer:
+                active_pointer = -1
         get_viewport().set_input_as_handled()
 
-    elif event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
-        _mouse_dragging = event.pressed
-        if _mouse_dragging:
-            pointer_origin = event.position
+    elif event is InputEventScreenDrag:
+        touch_points[event.index] = event.position
+        if touch_points.size() >= 2:
+            var current_distance := _current_pinch_distance()
+            if not _pinching:
+                _pinching = true
+                active_pointer = -1
+                input_vector = Vector2.ZERO
+                pinch_last_distance = current_distance
+            elif pinch_last_distance > 1.0 and current_distance > 1.0:
+                set_camera_zoom(camera_zoom_value() * current_distance / pinch_last_distance)
+                pinch_last_distance = current_distance
+            get_viewport().set_input_as_handled()
+        elif not _pinching and event.index == active_pointer:
             pointer_position = event.position
-        else:
-            input_vector = Vector2.ZERO
+            input_vector = ((pointer_position - pointer_origin) / 95.0).limit_length(1.0)
+            get_viewport().set_input_as_handled()
+
+    elif event is InputEventMouseButton:
+        if event.pressed and event.button_index == MOUSE_BUTTON_WHEEL_UP:
+            set_camera_zoom(camera_zoom_value() * ZOOM_STEP)
+            get_viewport().set_input_as_handled()
+        elif event.pressed and event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
+            set_camera_zoom(camera_zoom_value() / ZOOM_STEP)
+            get_viewport().set_input_as_handled()
+        elif event.button_index == MOUSE_BUTTON_LEFT:
+            _mouse_dragging = event.pressed
+            if _mouse_dragging:
+                pointer_origin = event.position
+                pointer_position = event.position
+            else:
+                input_vector = Vector2.ZERO
 
     elif event is InputEventMouseMotion and _mouse_dragging:
         pointer_position = event.position
         input_vector = ((pointer_position - pointer_origin) / 95.0).limit_length(1.0)
+
+
+func _current_pinch_distance() -> float:
+    if touch_points.size() < 2:
+        return 0.0
+    var keys: Array = touch_points.keys()
+    var first: Vector2 = touch_points[keys[0]]
+    var second: Vector2 = touch_points[keys[1]]
+    return first.distance_to(second)
+
+
+func camera_zoom_value() -> float:
+    var game_camera := get_node_or_null("GameCamera") as Camera2D
+    if game_camera:
+        return game_camera.zoom.x
+    return 1.58
+
+
+func set_camera_zoom(value: float) -> void:
+    var game_camera := get_node_or_null("GameCamera") as Camera2D
+    if not game_camera:
+        return
+    var clamped_zoom := clampf(value, MIN_CAMERA_ZOOM, MAX_CAMERA_ZOOM)
+    game_camera.zoom = Vector2(clamped_zoom, clamped_zoom)
+
 
 func _physics_process(delta: float) -> void:
     _walk_time += delta
