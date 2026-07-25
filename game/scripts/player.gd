@@ -30,17 +30,17 @@ func _ready() -> void:
     y_sort_enabled = true
 
     shadow = Polygon2D.new()
-    shadow.polygon = _ellipse_points(Vector2.ZERO, Vector2(42, 17), 30)
+    shadow.polygon = _ellipse_points(Vector2.ZERO, Vector2(38, 13), 30)
     shadow.color = Color(0.06, 0.03, 0.02, 0.32)
-    shadow.position = Vector2(0, 19)
+    shadow.position = Vector2(8, 6)
     shadow.z_index = -1
     add_child(shadow)
 
     body_sprite = Sprite2D.new()
-    body_sprite.texture = load("res://assets/characters/player_walk.png")
-    body_sprite.hframes = 4
-    body_sprite.frame = 1
-    body_sprite.scale = Vector2(0.40, 0.40)
+    body_sprite.texture = load("res://assets/characters/player_walk_v2.webp")
+    body_sprite.hframes = 8
+    body_sprite.frame = 0
+    body_sprite.scale = Vector2(0.32, 0.32)
     body_sprite.position = Vector2(0, -79)
     body_sprite.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
     add_child(body_sprite)
@@ -104,19 +104,19 @@ func _physics_process(delta: float) -> void:
 func _animate_body() -> void:
     var moving := velocity.length_squared() > 36.0
     if moving:
-        body_sprite.frame = WALK_FRAMES[int(_walk_time * 6.0) % WALK_FRAMES.size()]
+        body_sprite.frame = int(_walk_time * 10.0) % 8
         body_sprite.flip_h = velocity.x < -3.0
         body_sprite.position.y = -79.0
         body_sprite.rotation = 0.0
-        body_sprite.scale = Vector2(0.40, 0.40)
-        var stride := absf(sin(_walk_time * 6.0 * PI))
+        body_sprite.scale = Vector2(0.32, 0.32)
+        var stride := absf(sin(_walk_time * 10.0 * PI))
         shadow.scale = Vector2(1.0 - stride * 0.08, 1.0 - stride * 0.03)
         shadow.modulate.a = 0.92 - stride * 0.10
     else:
         body_sprite.frame = 1
         body_sprite.position.y = -79.0 + sin(_walk_time * 2.1) * 1.2
         body_sprite.rotation = 0.0
-        body_sprite.scale = Vector2(0.40, 0.40)
+        body_sprite.scale = Vector2(0.32, 0.32)
         shadow.scale = Vector2.ONE
         shadow.modulate.a = 1.0
 
