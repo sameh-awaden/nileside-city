@@ -54,9 +54,9 @@ func _ready() -> void:
     _sprite = Sprite2D.new()
     if texture_path != "":
         _sprite.texture = load(texture_path)
-    var rendered_scale := visual_scale * 2.25
+    var rendered_scale := visual_scale * 1.25
     _sprite.scale = Vector2.ONE * rendered_scale
-    _sprite.position.y = -maxf(40.0, (_sprite.texture.get_height() if _sprite.texture else 150) * rendered_scale * 0.35)
+    _sprite.position.y = -maxf(40.0, (_sprite.texture.get_height() if _sprite.texture else 150) * rendered_scale * 0.50)
     _sprite.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
     add_child(_sprite)
 
@@ -262,7 +262,7 @@ func _update_labels() -> void:
 func _pulse_sprite(target_scale: float = 1.06) -> void:
     if not _sprite:
         return
-    var base := Vector2.ONE * visual_scale * 2.25
+    var base := Vector2.ONE * visual_scale * 1.25
     var tween := create_tween()
     tween.tween_property(_sprite, "scale", base * target_scale, 0.09)
     tween.tween_property(_sprite, "scale", base, 0.13).set_trans(Tween.TRANS_BACK)
