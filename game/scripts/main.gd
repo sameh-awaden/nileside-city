@@ -150,28 +150,28 @@ func _build_world() -> void:
 
 func _spawn_static_buildings() -> void:
     var palace = STATIC_BUILDING_SCRIPT.new()
-    palace.setup("palace", "Palace", "res://assets/buildings/palace1.png", 1.04)
+    palace.setup("palace", "Palace", "res://assets/v2/palace.webp", 1.04)
     palace.global_position = Vector2(0, -510)
     palace.selected.connect(_on_static_building_selected)
     actors_root.add_child(palace)
     static_buildings["palace"] = palace
 
     var market = STATIC_BUILDING_SCRIPT.new()
-    market.setup("market", "Trade Market", "res://assets/buildings/market1.png", 1.0)
+    market.setup("market", "Trade Market", "res://assets/v2/market.webp", 1.0)
     market.global_position = market_position
     market.selected.connect(_on_static_building_selected)
     actors_root.add_child(market)
     static_buildings["market"] = market
 
     var warehouse = STATIC_BUILDING_SCRIPT.new()
-    warehouse.setup("warehouse", "City Warehouse", "res://assets/buildings/warehouse.png", 0.90)
+    warehouse.setup("warehouse", "City Warehouse", "res://assets/v2/warehouse.webp", 0.90)
     warehouse.global_position = warehouse_position
     warehouse.selected.connect(_on_static_building_selected)
     actors_root.add_child(warehouse)
     static_buildings["warehouse"] = warehouse
 
     var logistics = STATIC_BUILDING_SCRIPT.new()
-    logistics.setup("logistics", "Logistics Depot", "res://assets/buildings/logistics.png", 0.92)
+    logistics.setup("logistics", "Logistics Depot", "res://assets/v2/logistics.webp", 0.92)
     logistics.global_position = Vector2(0, 890)
     logistics.selected.connect(_on_static_building_selected)
     actors_root.add_child(logistics)
@@ -182,37 +182,37 @@ func _spawn_factories() -> void:
         {
             "id": "sawmill", "name": "Sawmill", "input": "wood", "output": "timber",
             "input_amount": 2.0, "output_amount": 2.0, "cycle": 4.0, "unlock": 2,
-            "texture": "res://assets/buildings/sawmill.png", "scale": 0.92,
+            "texture": "res://assets/v2/sawmill.webp", "scale": 0.92,
             "position": Vector2(-710, -700)
         },
         {
             "id": "bakery", "name": "Bakery", "input": "grain", "output": "bread",
             "input_amount": 2.0, "output_amount": 2.0, "cycle": 4.0, "unlock": 2,
-            "texture": "res://assets/buildings/bakery.png", "scale": 0.92,
+            "texture": "res://assets/v2/bakery.webp", "scale": 0.92,
             "position": Vector2(710, -700)
         },
         {
             "id": "masonry", "name": "Masonry Yard", "input": "stone", "output": "blocks",
             "input_amount": 2.0, "output_amount": 2.0, "cycle": 5.0, "unlock": 2,
-            "texture": "res://assets/buildings/masonry.png", "scale": 0.98,
+            "texture": "res://assets/v2/masonry.webp", "scale": 0.98,
             "position": Vector2(-820, 180)
         },
         {
             "id": "kiln", "name": "Brick Kiln", "input": "clay", "output": "bricks",
             "input_amount": 3.0, "output_amount": 3.0, "cycle": 4.5, "unlock": 2,
-            "texture": "res://assets/buildings/kiln.png", "scale": 1.0,
+            "texture": "res://assets/v2/kiln.webp", "scale": 1.0,
             "position": Vector2(820, 180)
         },
         {
             "id": "pottery", "name": "Pottery House", "input": "clay", "output": "pottery",
             "input_amount": 3.0, "output_amount": 2.0, "cycle": 6.0, "unlock": 4,
-            "texture": "res://assets/buildings/pottery.png", "scale": 0.98,
+            "texture": "res://assets/v2/pottery.webp", "scale": 0.98,
             "position": Vector2(-720, 1220)
         },
         {
             "id": "scribe", "name": "Scribe House", "input": "papyrus", "output": "scrolls",
             "input_amount": 2.0, "output_amount": 2.0, "cycle": 4.5, "unlock": 4,
-            "texture": "res://assets/buildings/papyrus_workshop.png", "scale": 0.82,
+            "texture": "res://assets/v2/scribe.webp", "scale": 0.82,
             "position": Vector2(720, 1220)
         },
     ]
@@ -246,13 +246,13 @@ func _spawn_resources() -> void:
     var rng := RandomNumberGenerator.new()
     rng.seed = 842149
 
-    _spawn_resource_cluster(rng, "wood", "res://assets/resources/palm.png", Vector2(-1120, -1250), Vector2(610, 690), 34, 6.0, 1.1, 20.0, 0.78)
+    _spawn_resource_cluster(rng, "wood", "res://assets/v2/palm.webp", Vector2(-1120, -1250), Vector2(610, 690), 34, 6.0, 1.1, 20.0, 0.78)
     _spawn_resource_cluster(rng, "wood", "res://assets/resources/palm.png", Vector2(1180, 2050), Vector2(520, 480), 18, 6.0, 1.1, 20.0, 0.72)
-    _spawn_resource_cluster(rng, "stone", "res://assets/resources/stone_blocks.png", Vector2(-1320, 700), Vector2(450, 820), 32, 7.0, 1.0, 23.0, 0.55)
-    _spawn_resource_cluster(rng, "grain", "res://assets/resources/reed.png", Vector2(1250, -950), Vector2(520, 760), 38, 4.0, 1.1, 14.0, 0.68)
-    _spawn_resource_cluster(rng, "clay", "res://assets/resources/stock_clay.png", Vector2(1260, 820), Vector2(470, 720), 28, 6.0, 1.0, 20.0, 0.48)
-    _spawn_resource_cluster(rng, "papyrus", "res://assets/resources/reed.png", Vector2(-1320, -80), Vector2(180, 1100), 36, 4.0, 1.2, 14.0, 0.78)
-    _spawn_resource_cluster(rng, "dates", "res://assets/resources/palm.png", Vector2(1180, 1560), Vector2(500, 430), 26, 5.0, 1.0, 17.0, 0.63)
+    _spawn_resource_cluster(rng, "stone", "res://assets/v2/stone.webp", Vector2(-1320, 700), Vector2(450, 820), 32, 7.0, 1.0, 23.0, 0.55)
+    _spawn_resource_cluster(rng, "grain", "res://assets/v2/grain.webp", Vector2(1250, -950), Vector2(520, 760), 38, 4.0, 1.1, 14.0, 0.68)
+    _spawn_resource_cluster(rng, "clay", "res://assets/v2/raw_clay.webp", Vector2(1260, 820), Vector2(470, 720), 28, 6.0, 1.0, 20.0, 0.48)
+    _spawn_resource_cluster(rng, "papyrus", "res://assets/v2/papyrus.webp", Vector2(-1320, -80), Vector2(180, 1100), 36, 4.0, 1.2, 14.0, 0.78)
+    _spawn_resource_cluster(rng, "dates", "res://assets/v2/date_palm.webp", Vector2(1180, 1560), Vector2(500, 430), 26, 5.0, 1.0, 17.0, 0.63)
     _spawn_resource_cluster(rng, "dates", "res://assets/resources/palm.png", Vector2(620, 850), Vector2(210, 180), 10, 5.0, 1.0, 17.0, 0.58)
 
 func _spawn_resource_cluster(
