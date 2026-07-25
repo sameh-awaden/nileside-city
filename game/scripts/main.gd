@@ -140,7 +140,7 @@ func _build_world() -> void:
     camera.position = Vector2(0, -110)
     camera.position_smoothing_enabled = true
     camera.position_smoothing_speed = 6.5
-    camera.zoom = Vector2(1.52, 1.52)
+    camera.zoom = Vector2(1.58, 1.58)
     camera.limit_left = -2200
     camera.limit_right = 2200
     camera.limit_top = -3000
@@ -417,7 +417,7 @@ func _build_ui() -> void:
 func _build_menu_panel() -> void:
     menu_panel = Panel.new()
     menu_panel.position = Vector2(660, 340)
-    menu_panel.size = Vector2(382, 330)
+    menu_panel.size = Vector2(382, 422)
     menu_panel.add_theme_stylebox_override("panel", _panel_style(Color(0.025, 0.06, 0.08, 0.97), Color("d7a43c"), 4, 26))
     menu_panel.visible = false
     ui_root.add_child(menu_panel)
@@ -428,7 +428,13 @@ func _build_menu_panel() -> void:
     var new_button := _create_action_button(menu_panel, Vector2(22, 116), Vector2(338, 74), "NEW CITY", Color("8c3f2b"))
     new_button.pressed.connect(_confirm_new_city)
 
-    var close_menu := _create_action_button(menu_panel, Vector2(22, 208), Vector2(338, 74), "CLOSE", Color("4f5960"))
+    var zoom_out := _create_action_button(menu_panel, Vector2(22, 208), Vector2(160, 74), "ZOOM OUT", Color("15547b"))
+    zoom_out.pressed.connect(func(): _change_zoom(1.0 / 1.12))
+
+    var zoom_in := _create_action_button(menu_panel, Vector2(200, 208), Vector2(160, 74), "ZOOM IN", Color("15547b"))
+    zoom_in.pressed.connect(func(): _change_zoom(1.12))
+
+    var close_menu := _create_action_button(menu_panel, Vector2(22, 300), Vector2(338, 74), "CLOSE", Color("4f5960"))
     close_menu.pressed.connect(_toggle_menu)
 
 func _create_resource_card(parent: Control, x: float, icon_path: String, starting_text: String) -> Label:
@@ -826,6 +832,8 @@ func _apply_pending_save() -> void:
         var pos = pending_save["player_position"]
         if pos is Array and pos.size() >= 2:
             player.global_position = Vector2(float(pos[0]), float(pos[1]))
+    if pending_save.has("camera_zoom"):
+        player.set_camera_zoom(float(pending_save["camera_zoom"]))
 
 func _simulate_offline_progress() -> void:
     if pending_save.is_empty():
@@ -862,6 +870,7 @@ func _save_game(show_feedback: bool = true) -> void:
         "factories": saved_factories,
         "market": market_manager.to_dict(),
         "player_position": [player.global_position.x, player.global_position.y],
+        "camera_zoom": player.camera_zoom_value(),
         "last_timestamp": Time.get_unix_time_from_system(),
     }
     var file := FileAccess.open(SAVE_PATH, FileAccess.WRITE)
@@ -869,6 +878,13 @@ func _save_game(show_feedback: bool = true) -> void:
         file.store_string(JSON.stringify(data))
     if show_feedback:
         _show_save_toast("SAVED")
+
+func _change_zoom(multiplier: float) -> void:
+    player.set_camera_zoom(player.camera_zoom_value() * multiplier)
+    var zoom_percent := int(round(player.camera_zoom_value() / 1.58 * 100.0))
+    _show_save_toast("ZOOM %d%%" % zoom_percent)
+    _save_game(false)
+
 
 func _toggle_menu() -> void:
     menu_panel.visible = not menu_panel.visible
