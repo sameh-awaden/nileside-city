@@ -11,6 +11,7 @@ const WORKER_SCRIPT := preload("res://scripts/worker.gd")
 const STATIC_BUILDING_SCRIPT := preload("res://scripts/static_building.gd")
 const RESOURCE_NODE_SCRIPT := preload("res://scripts/resource_node.gd")
 const ADMIN_PANEL_SCRIPT := preload("res://scripts/admin_panel.gd")
+const MARKET_CUSTOMER_SCRIPT := preload("res://scripts/market_customer.gd")
 
 var world_root: Node2D
 var actors_root: Node2D
@@ -139,7 +140,7 @@ func _build_world() -> void:
     camera.position = Vector2(0, -110)
     camera.position_smoothing_enabled = true
     camera.position_smoothing_speed = 6.5
-    camera.zoom = Vector2(1.28, 1.28)
+    camera.zoom = Vector2(1.52, 1.52)
     camera.limit_left = -2200
     camera.limit_right = 2200
     camera.limit_top = -3000
@@ -274,34 +275,27 @@ func _spawn_resource_cluster(
 
 func _spawn_customers() -> void:
     var configs := [
-        {"resource": "dates", "texture": "res://assets/characters/customer1.png", "position": Vector2(-205, 120)},
-        {"resource": "pottery", "texture": "res://assets/characters/customer2.png", "position": Vector2(0, 145)},
-        {"resource": "scrolls", "texture": "res://assets/characters/customer3.png", "position": Vector2(205, 120)},
+        {
+            "resource": "dates", "texture": "res://assets/characters/customer1.png",
+            "queue": Vector2(-285, 205), "stall": Vector2(-170, 112), "exit": Vector2(-390, 50)
+        },
+        {
+            "resource": "pottery", "texture": "res://assets/characters/customer2.png",
+            "queue": Vector2(0, 245), "stall": Vector2(0, 135), "exit": Vector2(380, 75)
+        },
+        {
+            "resource": "scrolls", "texture": "res://assets/characters/customer3.png",
+            "queue": Vector2(285, 205), "stall": Vector2(170, 112), "exit": Vector2(390, 50)
+        },
     ]
 
     for config in configs:
-        var sprite := Sprite2D.new()
-        sprite.texture = load(config["texture"])
-        sprite.scale = Vector2(0.54, 0.54)
-        sprite.position = config["position"]
-        sprite.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
-        static_buildings["market"].add_child(sprite)
-
-        var label := Label.new()
-        label.position = Vector2(-65, -102)
-        label.size = Vector2(130, 42)
-        label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-        label.add_theme_font_size_override("font_size", 22)
-        label.add_theme_color_override("font_color", Color("422414"))
-        var style := StyleBoxFlat.new()
-        style.bg_color = Color(1.0, 0.96, 0.82, 0.96)
-        style.corner_radius_top_left = 18
-        style.corner_radius_top_right = 18
-        style.corner_radius_bottom_left = 18
-        style.corner_radius_bottom_right = 18
-        label.add_theme_stylebox_override("normal", style)
-        sprite.add_child(label)
-        customer_labels[config["resource"]] = label
+        var customer = MARKET_CUSTOMER_SCRIPT.new()
+        customer.setup(
+            config["resource"], config["texture"], market_manager,
+            config["queue"], config["stall"], config["exit"]
+        )
+        static_buildings["market"].add_child(customer)
 
 # -----------------------------------------------------------------------------
 # UI
