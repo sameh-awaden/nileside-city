@@ -11,6 +11,7 @@ var cross_road := PackedVector2Array([
 func _ready() -> void:
     z_index = -100
     _add_tiled_ground()
+    _add_water_and_fields()
     _add_textured_road(main_road)
     _add_textured_road(cross_road)
     queue_redraw()
@@ -26,6 +27,43 @@ func _add_tiled_ground() -> void:
     ground.mouse_filter = Control.MOUSE_FILTER_IGNORE
     ground.z_index = -20
     add_child(ground)
+
+func _add_water_and_fields() -> void:
+    var water := TextureRect.new()
+    water.position = Vector2(-2200, -3000)
+    water.size = Vector2(640, 6000)
+    water.texture = load("res://assets/terrain/nile_water.webp")
+    water.texture_repeat = CanvasItem.TEXTURE_REPEAT_ENABLED
+    water.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
+    water.stretch_mode = TextureRect.STRETCH_TILE
+    water.mouse_filter = Control.MOUSE_FILTER_IGNORE
+    water.z_index = -19
+    add_child(water)
+
+    var river_bank := ColorRect.new()
+    river_bank.position = Vector2(-1560, -3000)
+    river_bank.size = Vector2(90, 6000)
+    river_bank.color = Color("78b9a8")
+    river_bank.mouse_filter = Control.MOUSE_FILTER_IGNORE
+    river_bank.z_index = -18
+    add_child(river_bank)
+
+    var field_texture: Texture2D = load("res://assets/terrain/sand_texture.webp")
+    for field_data in [
+        {"rect": Rect2(-1470, -3000, 210, 6000), "color": Color(0.58, 0.76, 0.47, 0.88)},
+        {"rect": Rect2(-1260, -3000, 220, 6000), "color": Color(0.69, 0.73, 0.35, 0.88)}
+    ]:
+        var field := TextureRect.new()
+        field.position = field_data["rect"].position
+        field.size = field_data["rect"].size
+        field.texture = field_texture
+        field.modulate = field_data["color"]
+        field.texture_repeat = CanvasItem.TEXTURE_REPEAT_ENABLED
+        field.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
+        field.stretch_mode = TextureRect.STRETCH_TILE
+        field.mouse_filter = Control.MOUSE_FILTER_IGNORE
+        field.z_index = -18
+        add_child(field)
 
 func _add_textured_road(points: PackedVector2Array) -> void:
     var edge := Line2D.new()
@@ -54,10 +92,6 @@ func _add_textured_road(points: PackedVector2Array) -> void:
 
 func _draw() -> void:
     # Nile and irrigated farmland use layered color plus drawn detail over the sand tile.
-    draw_rect(Rect2(-2200, -3000, 640, 6000), Color("2e8c9e"), true)
-    draw_rect(Rect2(-1560, -3000, 90, 6000), Color("76b9aa"), true)
-    draw_rect(Rect2(-1470, -3000, 210, 6000), Color("a9c88f"), true)
-    draw_rect(Rect2(-1260, -3000, 220, 6000), Color("c3c982"), true)
 
     for y in range(-2900, 3000, 150):
         draw_line(Vector2(-2160, y), Vector2(-1600, y + 40), Color(0.75, 0.94, 0.95, 0.24), 5.0)
