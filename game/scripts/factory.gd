@@ -45,16 +45,16 @@ func _ready() -> void:
     y_sort_enabled = true
 
     _shadow = Polygon2D.new()
-    _shadow.polygon = _ellipse_points(Vector2.ZERO, Vector2(105, 34), 30)
+    _shadow.polygon = _ellipse_points(Vector2.ZERO, Vector2(150, 38), 30)
     _shadow.color = Color(0.06, 0.03, 0.02, 0.28)
-    _shadow.position = Vector2(0, 32)
+    _shadow.position = Vector2(18, 8)
     _shadow.z_index = -1
     add_child(_shadow)
 
     _sprite = Sprite2D.new()
     if texture_path != "":
         _sprite.texture = load(texture_path)
-    var rendered_scale := visual_scale * 1.68
+    var rendered_scale := visual_scale * 2.25
     _sprite.scale = Vector2.ONE * rendered_scale
     _sprite.position.y = -maxf(40.0, (_sprite.texture.get_height() if _sprite.texture else 150) * rendered_scale * 0.35)
     _sprite.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
@@ -262,7 +262,7 @@ func _update_labels() -> void:
 func _pulse_sprite(target_scale: float = 1.06) -> void:
     if not _sprite:
         return
-    var base := Vector2.ONE * visual_scale
+    var base := Vector2.ONE * visual_scale * 2.25
     var tween := create_tween()
     tween.tween_property(_sprite, "scale", base * target_scale, 0.09)
     tween.tween_property(_sprite, "scale", base, 0.13).set_trans(Tween.TRANS_BACK)
