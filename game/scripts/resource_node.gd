@@ -28,17 +28,17 @@ func _ready() -> void:
     y_sort_enabled = true
 
     _shadow = Polygon2D.new()
-    _shadow.polygon = _ellipse_points(Vector2.ZERO, Vector2(74, 25), 24)
+    _shadow.polygon = _ellipse_points(Vector2.ZERO, Vector2(48, 15), 24)
     _shadow.color = Color(0.15, 0.10, 0.06, 0.22)
-    _shadow.position = Vector2(0, 24)
+    _shadow.position = Vector2(9, 6)
     _shadow.z_index = -1
     add_child(_shadow)
 
     _sprite = Sprite2D.new()
     if texture_path != "":
         _sprite.texture = load(texture_path)
-    _sprite.scale = Vector2.ONE * visual_scale * 1.82
-    _sprite.position.y = -maxf(15.0, (_sprite.texture.get_height() if _sprite.texture else 100) * visual_scale * 1.82 * 0.35)
+    _sprite.scale = Vector2.ONE * visual_scale * 2.10
+    _sprite.position.y = -maxf(15.0, (_sprite.texture.get_height() if _sprite.texture else 100) * visual_scale * 2.10 * 0.35)
     match resource_type:
         "stone":
             _sprite.modulate = Color(0.78, 0.82, 0.88, 1.0)
@@ -106,7 +106,7 @@ func _respawn() -> void:
         _sprite.scale = Vector2.ZERO
         _sprite.visible = true
         var tween := create_tween()
-        tween.tween_property(_sprite, "scale", Vector2.ONE * visual_scale * 1.82, 0.35).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+        tween.tween_property(_sprite, "scale", Vector2.ONE * visual_scale * 2.10, 0.35).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
     queue_redraw()
 
 func _draw() -> void:
