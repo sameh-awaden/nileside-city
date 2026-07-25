@@ -139,10 +139,10 @@ func _save() -> void:
 func _refresh() -> void:
     if not production_label:
         return
-    production_label.text = "PRODUCTION     ×%.3g" % float(GameState.tuning["production_multiplier"])
-    demand_label.text = "DEMAND             ×%.3g" % float(GameState.tuning["demand_multiplier"])
-    harvest_label.text = "HARVEST           ×%.3g" % float(GameState.tuning["harvest_multiplier"])
-    food_label.text = "FOOD USE          ×%.3g" % float(GameState.tuning["food_consumption_multiplier"])
+    production_label.text = "PRODUCTION     ×%.2f" % float(GameState.tuning["production_multiplier"])
+    demand_label.text = "DEMAND             ×%.2f" % float(GameState.tuning["demand_multiplier"])
+    harvest_label.text = "HARVEST           ×%.2f" % float(GameState.tuning["harvest_multiplier"])
+    food_label.text = "FOOD USE          ×%.2f" % float(GameState.tuning["food_consumption_multiplier"])
 
 func _button(text_value: String, pos: Vector2, size_value: Vector2, color: Color) -> Button:
     var result := Button.new()
