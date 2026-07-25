@@ -1,5 +1,5 @@
 name: Build Nileside City APK
-# Source refresh: complete art-direction terrain animation market polish
+# Source refresh: full approved style-board asset replacement
 
 on:
   workflow_dispatch:
