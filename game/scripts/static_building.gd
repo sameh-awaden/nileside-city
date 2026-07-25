@@ -8,6 +8,7 @@ var display_name: String = "Warehouse"
 var texture_path: String = ""
 var visual_scale: float = 0.9
 var _sprite: Sprite2D
+var _shadow: Polygon2D
 var _label: Label
 
 func setup(kind: String, title: String, path: String, scale_value: float = 0.9) -> void:
@@ -20,12 +21,12 @@ func _ready() -> void:
     y_sort_enabled = true
     z_index = 5
 
-    var shadow := Polygon2D.new()
-    shadow.polygon = _ellipse_points(Vector2.ZERO, Vector2(120, 40), 30)
-    shadow.color = Color(0.06, 0.03, 0.02, 0.28)
-    shadow.position = Vector2(0, 37)
-    shadow.z_index = -1
-    add_child(shadow)
+    _shadow = Polygon2D.new()
+    _shadow.polygon = _ellipse_points(Vector2.ZERO, Vector2(150, 38), 30)
+    _shadow.color = Color(0.08, 0.04, 0.02, 0.28)
+    _shadow.position = Vector2(18, 8)
+    _shadow.z_index = -1
+    add_child(_shadow)
 
     _sprite = Sprite2D.new()
     _sprite.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
@@ -50,9 +51,9 @@ func _ready() -> void:
     area.input_pickable = true
     var shape := CollisionShape2D.new()
     var rect := RectangleShape2D.new()
-    rect.size = Vector2(280, 240)
+    rect.size = Vector2(360, 290)
     shape.shape = rect
-    shape.position = Vector2(0, -35)
+    shape.position = Vector2(0, -55)
     area.add_child(shape)
     area.input_event.connect(_on_input_event)
     add_child(area)
@@ -82,7 +83,11 @@ func refresh() -> void:
         _sprite.texture = load(path)
     var rendered_scale := visual_scale * 2.25
     _sprite.scale = Vector2.ONE * rendered_scale
-    _sprite.position.y = -maxf(45.0, (_sprite.texture.get_height() if _sprite.texture else 180) * rendered_scale * 0.37)\n    if _shadow and _sprite.texture:\n        var footprint_x: float = clampf(float(_sprite.texture.get_width()) * rendered_scale * 0.31, 125.0, 260.0)\n        _shadow.polygon = _ellipse_points(Vector2.ZERO, Vector2(footprint_x, footprint_x * 0.25), 30)\n        _shadow.position = Vector2(18, 8)
+    _sprite.position.y = -maxf(45.0, (_sprite.texture.get_height() if _sprite.texture else 180) * rendered_scale * 0.37)
+    if _shadow and _sprite.texture:
+        var footprint_x: float = clampf(float(_sprite.texture.get_width()) * rendered_scale * 0.31, 125.0, 260.0)
+        _shadow.polygon = _ellipse_points(Vector2.ZERO, Vector2(footprint_x, footprint_x * 0.25), 30)
+        _shadow.position = Vector2(18, 8)
 
 func _on_input_event(_viewport: Node, event: InputEvent, _shape_idx: int) -> void:
     var activate := false
