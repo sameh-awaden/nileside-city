@@ -14,16 +14,14 @@ Completed load for: 'res://scripts/game_state.gd' remapped 'res://scripts/game_s
 Loaded system CA certificates
 Loading resource: res://scenes/main.tscn remapped: res://scenes/main.tscn
 Loading resource: res://scripts/main.gd remapped: res://scripts/main.gd
-SCRIPT ERROR: Parse Error: Assigned value for constant "MAIN_ROAD" isn't a constant expression.
-          at: GDScript::reload (res://scripts/world_background.gd:4)
-SCRIPT ERROR: Parse Error: Assigned value for constant "CROSS_ROAD" isn't a constant expression.
-          at: GDScript::reload (res://scripts/world_background.gd:7)
-SCRIPT ERROR: Compile Error: Failed to compile depended scripts.
-          at: GDScript::reload (res://scripts/main.gd:0)
-ERROR: Failed to load script "res://scripts/main.gd" with error "Compilation failed".
-   at: load (modules/gdscript/gdscript_resource_format.cpp:46)
 Completed load for: 'res://scripts/main.gd' remapped 'res://scripts/main.gd' at thread -1
 Completed load for: 'res://scenes/main.tscn' remapped 'res://scenes/main.tscn' at thread -1
+Loading resource: res://assets/terrain/sand_texture.webp remapped: res://assets/terrain/sand_texture.webp
+Loading resource: res://.godot/imported/sand_texture.webp-1c90f3ab59b51a02e9a39b94680f78d2.ctex remapped: res://.godot/imported/sand_texture.webp-1c90f3ab59b51a02e9a39b94680f78d2.ctex
+Completed load for: 'res://assets/terrain/sand_texture.webp' remapped 'res://assets/terrain/sand_texture.webp' at thread -1
+Loading resource: res://assets/terrain/road_texture.webp remapped: res://assets/terrain/road_texture.webp
+Loading resource: res://.godot/imported/road_texture.webp-3f2f219f958f5976b5e32d8ea19c2b8c.ctex remapped: res://.godot/imported/road_texture.webp-3f2f219f958f5976b5e32d8ea19c2b8c.ctex
+Completed load for: 'res://assets/terrain/road_texture.webp' remapped 'res://assets/terrain/road_texture.webp' at thread -1
 Loading resource: res://assets/buildings/palace1.png remapped: res://assets/buildings/palace1.png
 Loading resource: res://.godot/imported/palace1.png-0009d0176fbbac949955545423d52f0f.ctex remapped: res://.godot/imported/palace1.png-0009d0176fbbac949955545423d52f0f.ctex
 Completed load for: 'res://assets/buildings/palace1.png' remapped 'res://assets/buildings/palace1.png' at thread -1
@@ -91,13 +89,7 @@ Loading resource: res://assets/characters/customer3.png remapped: res://assets/c
 Loading resource: res://.godot/imported/customer3.png-d3382ce2645c0586cda403901d811495.ctex remapped: res://.godot/imported/customer3.png-d3382ce2645c0586cda403901d811495.ctex
 Completed load for: 'res://assets/characters/customer3.png' remapped 'res://assets/characters/customer3.png' at thread -1
 Loading resource: res://assets/characters/player_walk_v2.webp remapped: res://assets/characters/player_walk_v2.webp
-Failed loading resource: res://assets/characters/player_walk_v2.webp
-ERROR: Failed loading resource: res://assets/characters/player_walk_v2.webp.
-   at: _load (core/io/resource_loader.cpp:317)
-   GDScript backtrace (most recent call first):
-       [0] _ready (res://scripts/player.gd:40)
-       [1] _build_world (res://scripts/main.gd:136)
-       [2] _ready (res://scripts/main.gd:62)
+Loading resource: res://.godot/imported/player_walk_v2.webp-baa38606bb493f488d16249074e848b1.ctex remapped: res://.godot/imported/player_walk_v2.webp-baa38606bb493f488d16249074e848b1.ctex
 Completed load for: 'res://assets/characters/player_walk_v2.webp' remapped 'res://assets/characters/player_walk_v2.webp' at thread -1
 Loading resource: res://assets/resources/sickle.png remapped: res://assets/resources/sickle.png
 Loading resource: res://.godot/imported/sickle.png-6de2a6f644e4962a0144273e01bed409.ctex remapped: res://.godot/imported/sickle.png-6de2a6f644e4962a0144273e01bed409.ctex
