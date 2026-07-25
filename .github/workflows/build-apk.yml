@@ -1,5 +1,5 @@
 name: Build Nileside City APK
-# Source refresh: scaled world, fixed harvesting HUD, restored admin panel
+# Source refresh: complete art-direction terrain animation market polish
 
 on:
   workflow_dispatch:
