@@ -19,6 +19,9 @@ Completed load for: 'res://scenes/main.tscn' remapped 'res://scenes/main.tscn' a
 Loading resource: res://assets/terrain/sand_texture.webp remapped: res://assets/terrain/sand_texture.webp
 Loading resource: res://.godot/imported/sand_texture.webp-1c90f3ab59b51a02e9a39b94680f78d2.ctex remapped: res://.godot/imported/sand_texture.webp-1c90f3ab59b51a02e9a39b94680f78d2.ctex
 Completed load for: 'res://assets/terrain/sand_texture.webp' remapped 'res://assets/terrain/sand_texture.webp' at thread -1
+Loading resource: res://assets/terrain/nile_water.webp remapped: res://assets/terrain/nile_water.webp
+Loading resource: res://.godot/imported/nile_water.webp-c8d17d125ccb942cd36e847baf33fe80.ctex remapped: res://.godot/imported/nile_water.webp-c8d17d125ccb942cd36e847baf33fe80.ctex
+Completed load for: 'res://assets/terrain/nile_water.webp' remapped 'res://assets/terrain/nile_water.webp' at thread -1
 Loading resource: res://assets/terrain/road_texture.webp remapped: res://assets/terrain/road_texture.webp
 Loading resource: res://.godot/imported/road_texture.webp-3f2f219f958f5976b5e32d8ea19c2b8c.ctex remapped: res://.godot/imported/road_texture.webp-3f2f219f958f5976b5e32d8ea19c2b8c.ctex
 Completed load for: 'res://assets/terrain/road_texture.webp' remapped 'res://assets/terrain/road_texture.webp' at thread -1
