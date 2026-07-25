@@ -1,5 +1,5 @@
-run_id=30136783060
-commit=59d2bbf9a201e340c32f27df89f0f7c379f0fb58
+run_id=30136877611
+commit=490ac45cac99d543d9129b5962b6af45f7dec49a
 import_outcome=success
-startup_outcome=success
-generated_at=2026-07-25T00:39:33Z
+startup_outcome=failure
+generated_at=2026-07-25T00:42:02Z
