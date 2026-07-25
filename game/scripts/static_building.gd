@@ -68,10 +68,10 @@ func refresh() -> void:
     var path := texture_path
     match building_type:
         "palace":
-            path = "res://assets/buildings/palace%d.png" % mini(5, GameState.city_level)
+            path = "res://assets/v2/palace.webp"
             _label.text = "PALACE  CITY %d" % GameState.city_level
         "market":
-            path = "res://assets/buildings/market%d.png" % mini(4, GameState.market_level)
+            path = "res://assets/v2/market.webp"
             _label.text = "TRADE MARKET  L%d" % GameState.market_level
         "warehouse":
             _label.text = "CITY WAREHOUSE"
@@ -81,11 +81,11 @@ func refresh() -> void:
             _label.text = display_name.to_upper()
     if path != "" and (_sprite.texture == null or _sprite.texture.resource_path != path):
         _sprite.texture = load(path)
-    var rendered_scale := visual_scale * 2.25
+    var rendered_scale := visual_scale * 1.15
     _sprite.scale = Vector2.ONE * rendered_scale
-    _sprite.position.y = -maxf(45.0, (_sprite.texture.get_height() if _sprite.texture else 180) * rendered_scale * 0.37)
+    _sprite.position.y = -maxf(45.0, (_sprite.texture.get_height() if _sprite.texture else 180) * rendered_scale * 0.50)
     if _shadow and _sprite.texture:
-        var footprint_x: float = clampf(float(_sprite.texture.get_width()) * rendered_scale * 0.31, 125.0, 260.0)
+        var footprint_x: float = clampf(float(_sprite.texture.get_width()) * rendered_scale * 0.28, 125.0, 260.0)
         _shadow.polygon = _ellipse_points(Vector2.ZERO, Vector2(footprint_x, footprint_x * 0.25), 30)
         _shadow.position = Vector2(18, 8)
 
