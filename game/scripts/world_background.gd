@@ -1,18 +1,18 @@
 extends Node2D
 
 const WORLD_RECT := Rect2(-2200.0, -3000.0, 4400.0, 6000.0)
-const MAIN_ROAD := PackedVector2Array([
+var main_road := PackedVector2Array([
     Vector2(-700, 2400), Vector2(-650, 900), Vector2(0, 300), Vector2(0, -2500)
 ])
-const CROSS_ROAD := PackedVector2Array([
+var cross_road := PackedVector2Array([
     Vector2(-1200, 200), Vector2(0, 300), Vector2(1250, 250)
 ])
 
 func _ready() -> void:
     z_index = -100
     _add_tiled_ground()
-    _add_textured_road(MAIN_ROAD)
-    _add_textured_road(CROSS_ROAD)
+    _add_textured_road(main_road)
+    _add_textured_road(cross_road)
     queue_redraw()
 
 func _add_tiled_ground() -> void:
