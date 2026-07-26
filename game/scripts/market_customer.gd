@@ -27,7 +27,7 @@ func setup(resource: String, path: String, manager, queue_pos: Vector2, stall_po
 func _ready() -> void:
     z_index = 12
     shadow = Polygon2D.new()
-    shadow.polygon = _ellipse_points(Vector2.ZERO, Vector2(26, 9), 20)
+    shadow.polygon = _ellipse_points(Vector2.ZERO, Vector2(34, 12), 20)
     shadow.color = Color(0.08, 0.04, 0.02, 0.30)
     shadow.position = Vector2(7, 5)
     shadow.z_index = -1
@@ -35,14 +35,14 @@ func _ready() -> void:
 
     sprite = Sprite2D.new()
     sprite.texture = load(texture_path)
-    sprite.scale = Vector2(0.62, 0.62)
-    sprite.position = Vector2(0, -61)
+    sprite.scale = Vector2(0.76, 0.76)
+    sprite.position = Vector2(0, -76)
     sprite.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
     add_child(sprite)
 
     label = Label.new()
-    label.position = Vector2(-72, -128)
-    label.size = Vector2(144, 40)
+    label.position = Vector2(-78, -156)
+    label.size = Vector2(156, 42)
     label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
     label.add_theme_font_size_override("font_size", 20)
     label.add_theme_color_override("font_color", Color("422414"))
@@ -69,7 +69,7 @@ func _process(delta: float) -> void:
                 pause_left = 1.1
         "buy":
             pause_left -= delta
-            sprite.position.y = -61.0 + sin(walk_time * 5.0) * 1.2
+            sprite.position.y = -76.0 + sin(walk_time * 5.0) * 1.2
             if pause_left <= 0.0:
                 state = "leave"
         "leave":
@@ -85,13 +85,13 @@ func _walk_to(target: Vector2, delta: float) -> bool:
     var distance := offset.length()
     if distance <= speed * delta:
         position = target
-        sprite.position.y = -61.0
+        sprite.position.y = -76.0
         return true
     var direction := offset / distance
     position += direction * speed * delta
     sprite.flip_h = direction.x < 0.0
     var stride := sin(walk_time * 10.0)
-    sprite.position.y = -61.0 - absf(stride) * 1.1
+    sprite.position.y = -76.0 - absf(stride) * 1.1
     sprite.rotation = stride * 0.010
     shadow.scale.x = 1.0 - absf(stride) * 0.06
     return false
