@@ -25,6 +25,7 @@ var _name_label: Label
 var _buffer_label: Label
 var _area: Area2D
 var _locked_label: Label
+var _status_label: Label
 
 const LEVEL_MULTIPLIERS: Array[float] = [0.0, 1.0, 1.7, 2.7, 4.2, 6.5, 10.0, 15.0, 22.0, 32.0, 46.0]
 
@@ -77,6 +78,15 @@ func _ready() -> void:
     _locked_label.size = Vector2(196, 42)
     _locked_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
     add_child(_locked_label)
+
+    _status_label = _make_label(19, Color("fff3cb"), Color(0.50, 0.18, 0.06, 0.96))
+    var texture_height := float(_sprite.texture.get_height() if _sprite.texture else 180)
+    var status_y := _sprite.position.y - texture_height * rendered_scale * 0.46 - 44.0
+    _status_label.position = Vector2(-132, status_y)
+    _status_label.size = Vector2(264, 40)
+    _status_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+    _status_label.visible = false
+    add_child(_status_label)
 
     _area = Area2D.new()
     _area.input_pickable = true
@@ -258,6 +268,16 @@ func _update_labels() -> void:
     _name_label.text = "%s  L%d" % [display_name.to_upper(), level]
     _buffer_label.text = "%s  %d/%d" % [output_resource.to_upper(), int(output_buffer), int(storage_capacity())]
     _buffer_label.visible = level > 0
+
+    _status_label.visible = false
+    if level > 0 and is_unlocked():
+        var needed_input := input_amount * maxf(1.0, sqrt(production_multiplier()))
+        if output_buffer >= storage_capacity() * 0.94:
+            _status_label.text = "STORAGE FULL"
+            _status_label.visible = true
+        elif GameState.amount(input_resource) < needed_input:
+            _status_label.text = "NEEDS %s" % input_resource.to_upper()
+            _status_label.visible = true
 
 func _pulse_sprite(target_scale: float = 1.06) -> void:
     if not _sprite:
