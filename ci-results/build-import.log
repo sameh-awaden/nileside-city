@@ -617,13 +617,13 @@ Completed load for: 'res://scripts/game_state.gd' remapped 'res://scripts/game_s
 EditorFileSystem: Importing file: res://assets/ui/boat.png
 EditorFileSystem: Importing file: res://assets/ui/market_awning.png
 EditorFileSystem: Importing file: res://assets/terrain/sand_texture.webp
-EditorFileSystem: "res://assets/ui/market_awning.png" import took 9 ms.
+EditorFileSystem: "res://assets/ui/boat.png" import took 10 ms.
 EditorFileSystem: Importing file: res://assets/terrain/road_texture.webp
 [   1% ] [90m[1mreimport[22m | boat.png[39m[0m
-EditorFileSystem: "res://assets/ui/boat.png" import took 19 ms.
+EditorFileSystem: "res://assets/ui/market_awning.png" import took 10 ms.
 EditorFileSystem: Importing file: res://assets/terrain/nile_water.webp
 [   2% ] [90m[1mreimport[22m | sand_texture.webp[39m[0m
-EditorFileSystem: "res://assets/terrain/road_texture.webp" import took 85 ms.
+EditorFileSystem: "res://assets/terrain/sand_texture.webp" import took 83 ms.
 EditorFileSystem: Importing file: res://assets/resources/timber.png
 [   4% ] [90m[1mreimport[22m | road_texture.webp[39m[0m
 EditorFileSystem: "res://assets/resources/timber.png" import took 4 ms.
@@ -635,203 +635,203 @@ EditorFileSystem: Importing file: res://assets/resources/stock_wood.png
 EditorFileSystem: "res://assets/resources/stock_wood.png" import took 10 ms.
 EditorFileSystem: Importing file: res://assets/resources/stock_stone.png
 [   8% ] [90m[1mreimport[22m | stone_blocks.png[39m[0m
-EditorFileSystem: "res://assets/resources/stock_stone.png" import took 10 ms.
+EditorFileSystem: "res://assets/terrain/road_texture.webp" import took 98 ms.
 EditorFileSystem: Importing file: res://assets/resources/stock_clay.png
 [   9% ] [90m[1mreimport[22m | stock_wood.png[39m[0m
-EditorFileSystem: "res://assets/resources/stock_clay.png" import took 11 ms.
+EditorFileSystem: "res://assets/terrain/nile_water.webp" import took 101 ms.
 EditorFileSystem: Importing file: res://assets/resources/sickle.png
 [  10% ] [90m[1mreimport[22m | stock_stone.png[39m[0m
-EditorFileSystem: "res://assets/resources/sickle.png" import took 4 ms.
+EditorFileSystem: "res://assets/resources/stock_stone.png" import took 10 ms.
 EditorFileSystem: Importing file: res://assets/resources/scrolls.png
 [  12% ] [90m[1mreimport[22m | stock_clay.png[39m[0m
-EditorFileSystem: "res://assets/resources/scrolls.png" import took 5 ms.
+EditorFileSystem: "res://assets/resources/sickle.png" import took 5 ms.
 EditorFileSystem: Importing file: res://assets/resources/reed.png
 [  13% ] [90m[1mreimport[22m | sickle.png[39m[0m
-EditorFileSystem: "res://assets/resources/reed.png" import took 6 ms.
+EditorFileSystem: "res://assets/resources/scrolls.png" import took 5 ms.
 EditorFileSystem: Importing file: res://assets/resources/pottery_icon.png
 [  14% ] [90m[1mreimport[22m | scrolls.png[39m[0m
-EditorFileSystem: "res://assets/resources/pottery_icon.png" import took 5 ms.
+EditorFileSystem: "res://assets/resources/stock_clay.png" import took 12 ms.
 EditorFileSystem: Importing file: res://assets/resources/pickaxe.png
 [  16% ] [90m[1mreimport[22m | reed.png[39m[0m
-EditorFileSystem: "res://assets/terrain/sand_texture.webp" import took 158 ms.
-EditorFileSystem: "res://assets/resources/pickaxe.png" import took 5 ms.
-[  17% ] [90m[1mreimport[22m | pottery_icon.png[39m[0m
+EditorFileSystem: "res://assets/resources/pottery_icon.png" import took 4 ms.
 EditorFileSystem: Importing file: res://assets/resources/papyrus_bundle.png
+[  17% ] [90m[1mreimport[22m | pottery_icon.png[39m[0m
+EditorFileSystem: "res://assets/resources/reed.png" import took 6 ms.
 EditorFileSystem: Importing file: res://assets/resources/palm.png
 [  18% ] [90m[1mreimport[22m | pickaxe.png[39m[0m
-EditorFileSystem: "res://assets/resources/palm.png" import took 7 ms.
+EditorFileSystem: "res://assets/resources/pickaxe.png" import took 4 ms.
 EditorFileSystem: Importing file: res://assets/resources/dates.png
 [  20% ] [90m[1mreimport[22m | papyrus_bundle.png[39m[0m
-EditorFileSystem: "res://assets/resources/papyrus_bundle.png" import took 9 ms.
+EditorFileSystem: "res://assets/resources/papyrus_bundle.png" import took 5 ms.
 EditorFileSystem: Importing file: res://icon.png
 [  21% ] [90m[1mreimport[22m | palm.png[39m[0m
 EditorFileSystem: "res://assets/resources/dates.png" import took 4 ms.
 EditorFileSystem: Importing file: res://assets/v2/warehouse.webp
 [  22% ] [90m[1mreimport[22m | dates.png[39m[0m
-EditorFileSystem: "res://assets/terrain/nile_water.webp" import took 161 ms.
+EditorFileSystem: "res://assets/resources/palm.png" import took 7 ms.
 EditorFileSystem: Importing file: res://assets/v2/stone.webp
 [  24% ] [90m[1mreimport[22m | icon.png[39m[0m
-EditorFileSystem: "res://assets/v2/stone.webp" import took 60 ms.
+EditorFileSystem: "res://assets/v2/stone.webp" import took 69 ms.
 EditorFileSystem: Importing file: res://assets/v2/scribe.webp
 [  25% ] [90m[1mreimport[22m | warehouse.webp[39m[0m
-EditorFileSystem: "res://assets/v2/warehouse.webp" import took 115 ms.
+EditorFileSystem: "res://icon.png" import took 93 ms.
 EditorFileSystem: Importing file: res://assets/v2/sawmill.webp
 [  27% ] [90m[1mreimport[22m | stone.webp[39m[0m
-EditorFileSystem: "res://assets/v2/scribe.webp" import took 80 ms.
+EditorFileSystem: "res://assets/v2/warehouse.webp" import took 130 ms.
 EditorFileSystem: Importing file: res://assets/v2/raw_clay.webp
 [  28% ] [90m[1mreimport[22m | scribe.webp[39m[0m
-EditorFileSystem: "res://icon.png" import took 163 ms.
+EditorFileSystem: "res://assets/v2/scribe.webp" import took 89 ms.
 EditorFileSystem: Importing file: res://assets/v2/pottery.webp
 [  29% ] [90m[1mreimport[22m | sawmill.webp[39m[0m
-EditorFileSystem: "res://assets/v2/sawmill.webp" import took 80 ms.
+EditorFileSystem: "res://assets/v2/sawmill.webp" import took 82 ms.
 EditorFileSystem: Importing file: res://assets/v2/papyrus.webp
 [  31% ] [90m[1mreimport[22m | raw_clay.webp[39m[0m
-EditorFileSystem: "res://assets/v2/raw_clay.webp" import took 54 ms.
+EditorFileSystem: "res://assets/v2/raw_clay.webp" import took 62 ms.
 EditorFileSystem: Importing file: res://assets/v2/palm.webp
 [  32% ] [90m[1mreimport[22m | pottery.webp[39m[0m
-EditorFileSystem: "res://assets/v2/palm.webp" import took 58 ms.
+EditorFileSystem: "res://assets/v2/papyrus.webp" import took 67 ms.
 EditorFileSystem: Importing file: res://assets/v2/palace.webp
 [  33% ] [90m[1mreimport[22m | papyrus.webp[39m[0m
-EditorFileSystem: "res://assets/v2/papyrus.webp" import took 66 ms.
+EditorFileSystem: "res://assets/v2/pottery.webp" import took 87 ms.
 EditorFileSystem: Importing file: res://assets/v2/masonry.webp
 [  35% ] [90m[1mreimport[22m | palm.webp[39m[0m
-EditorFileSystem: "res://assets/v2/pottery.webp" import took 144 ms.
+EditorFileSystem: "res://assets/v2/palm.webp" import took 59 ms.
 EditorFileSystem: Importing file: res://assets/v2/market.webp
 [  36% ] [90m[1mreimport[22m | palace.webp[39m[0m
-EditorFileSystem: "res://assets/v2/masonry.webp" import took 86 ms.
+EditorFileSystem: "res://assets/v2/masonry.webp" import took 97 ms.
 EditorFileSystem: Importing file: res://assets/v2/logistics.webp
 [  37% ] [90m[1mreimport[22m | masonry.webp[39m[0m
-EditorFileSystem: "res://assets/v2/palace.webp" import took 121 ms.
+EditorFileSystem: "res://assets/v2/market.webp" import took 102 ms.
 EditorFileSystem: Importing file: res://assets/v2/kiln.webp
 [  39% ] [90m[1mreimport[22m | market.webp[39m[0m
-EditorFileSystem: "res://assets/v2/logistics.webp" import took 93 ms.
+EditorFileSystem: "res://assets/v2/palace.webp" import took 127 ms.
 EditorFileSystem: Importing file: res://assets/v2/grain.webp
 [  40% ] [90m[1mreimport[22m | logistics.webp[39m[0m
-EditorFileSystem: "res://assets/v2/kiln.webp" import took 76 ms.
+EditorFileSystem: "res://assets/v2/kiln.webp" import took 86 ms.
 EditorFileSystem: Importing file: res://assets/v2/date_palm.webp
 [  41% ] [90m[1mreimport[22m | kiln.webp[39m[0m
-EditorFileSystem: "res://assets/v2/market.webp" import took 180 ms.
+EditorFileSystem: "res://assets/v2/grain.webp" import took 73 ms.
 EditorFileSystem: Importing file: res://assets/v2/bakery.webp
 [  43% ] [90m[1mreimport[22m | grain.webp[39m[0m
-EditorFileSystem: "res://assets/v2/grain.webp" import took 71 ms.
+EditorFileSystem: "res://assets/v2/logistics.webp" import took 102 ms.
 EditorFileSystem: Importing file: res://assets/ui/obelisk.png
 [  44% ] [90m[1mreimport[22m | date_palm.webp[39m[0m
-EditorFileSystem: "res://assets/ui/obelisk.png" import took 4 ms.
+EditorFileSystem: "res://assets/ui/obelisk.png" import took 3 ms.
 EditorFileSystem: Importing file: res://assets/buildings/sawmill.png
 [  45% ] [90m[1mreimport[22m | bakery.webp[39m[0m
 EditorFileSystem: "res://assets/buildings/sawmill.png" import took 18 ms.
 EditorFileSystem: Importing file: res://assets/buildings/quarry.png
 [  47% ] [90m[1mreimport[22m | obelisk.png[39m[0m
-EditorFileSystem: "res://assets/buildings/quarry.png" import took 18 ms.
-[  48% ] [90m[1mreimport[22m | sawmill.png[39m[0m
+EditorFileSystem: "res://assets/buildings/quarry.png" import took 20 ms.
 EditorFileSystem: Importing file: res://assets/buildings/pottery.png
-EditorFileSystem: "res://assets/v2/date_palm.webp" import took 107 ms.
-EditorFileSystem: "res://assets/buildings/pottery.png" import took 17 ms.
+[  48% ] [90m[1mreimport[22m | sawmill.png[39m[0m
+EditorFileSystem: "res://assets/v2/date_palm.webp" import took 60 ms.
 EditorFileSystem: Importing file: res://assets/buildings/papyrus_workshop.png
 [  50% ] [90m[1mreimport[22m | quarry.png[39m[0m
+EditorFileSystem: "res://assets/buildings/pottery.png" import took 18 ms.
 EditorFileSystem: Importing file: res://assets/buildings/palace5.png
 [  51% ] [90m[1mreimport[22m | pottery.png[39m[0m
-EditorFileSystem: "res://assets/v2/bakery.webp" import took 120 ms.
+EditorFileSystem: "res://assets/buildings/papyrus_workshop.png" import took 24 ms.
 EditorFileSystem: Importing file: res://assets/buildings/palace4.png
 [  52% ] [90m[1mreimport[22m | papyrus_workshop.png[39m[0m
-EditorFileSystem: "res://assets/buildings/papyrus_workshop.png" import took 40 ms.
+EditorFileSystem: "res://assets/v2/bakery.webp" import took 88 ms.
 EditorFileSystem: Importing file: res://assets/buildings/palace3.png
 [  54% ] [90m[1mreimport[22m | palace5.png[39m[0m
-EditorFileSystem: "res://assets/buildings/palace5.png" import took 44 ms.
+EditorFileSystem: "res://assets/buildings/palace5.png" import took 47 ms.
 EditorFileSystem: Importing file: res://assets/buildings/palace2.png
 [  55% ] [90m[1mreimport[22m | palace4.png[39m[0m
-EditorFileSystem: "res://assets/buildings/palace4.png" import took 27 ms.
+EditorFileSystem: "res://assets/buildings/palace4.png" import took 30 ms.
 EditorFileSystem: Importing file: res://assets/buildings/palace1.png
 [  56% ] [90m[1mreimport[22m | palace3.png[39m[0m
-EditorFileSystem: "res://assets/buildings/palace2.png" import took 20 ms.
+EditorFileSystem: "res://assets/buildings/palace3.png" import took 26 ms.
 EditorFileSystem: Importing file: res://assets/buildings/masonry.png
 [  58% ] [90m[1mreimport[22m | palace2.png[39m[0m
-EditorFileSystem: "res://assets/buildings/palace1.png" import took 14 ms.
+EditorFileSystem: "res://assets/buildings/palace1.png" import took 16 ms.
 EditorFileSystem: Importing file: res://assets/buildings/market_awning.png
 [  59% ] [90m[1mreimport[22m | palace1.png[39m[0m
-EditorFileSystem: "res://assets/buildings/masonry.png" import took 17 ms.
-[  60% ] [90m[1mreimport[22m | masonry.png[39m[0m
+EditorFileSystem: "res://assets/buildings/masonry.png" import took 16 ms.
 EditorFileSystem: Importing file: res://assets/buildings/market4.png
-EditorFileSystem: "res://assets/buildings/market_awning.png" import took 8 ms.
+[  60% ] [90m[1mreimport[22m | masonry.png[39m[0m
+EditorFileSystem: "res://assets/buildings/palace2.png" import took 23 ms.
 EditorFileSystem: Importing file: res://assets/buildings/market3.png
 [  62% ] [90m[1mreimport[22m | market_awning.png[39m[0m
-EditorFileSystem: "res://assets/buildings/palace3.png" import took 50 ms.
+EditorFileSystem: "res://assets/buildings/market_awning.png" import took 8 ms.
 EditorFileSystem: Importing file: res://assets/buildings/market2.png
 [  63% ] [90m[1mreimport[22m | market4.png[39m[0m
-EditorFileSystem: "res://assets/buildings/market3.png" import took 18 ms.
+EditorFileSystem: "res://assets/buildings/market3.png" import took 20 ms.
 EditorFileSystem: Importing file: res://assets/buildings/market1.png
 [  64% ] [90m[1mreimport[22m | market3.png[39m[0m
-EditorFileSystem: "res://assets/buildings/market4.png" import took 25 ms.
+EditorFileSystem: "res://assets/buildings/market2.png" import took 19 ms.
+EditorFileSystem: "res://assets/buildings/market4.png" import took 26 ms.
 EditorFileSystem: Importing file: res://assets/buildings/logistics.png
 [  66% ] [90m[1mreimport[22m | market2.png[39m[0m
-EditorFileSystem: "res://assets/buildings/market1.png" import took 18 ms.
 EditorFileSystem: Importing file: res://assets/buildings/kiln.png
 [  67% ] [90m[1mreimport[22m | market1.png[39m[0m
-EditorFileSystem: "res://assets/buildings/logistics.png" import took 18 ms.
+EditorFileSystem: "res://assets/buildings/kiln.png" import took 14 ms.
 EditorFileSystem: Importing file: res://assets/buildings/bakery.png
-EditorFileSystem: "res://assets/buildings/market2.png" import took 35 ms.
-EditorFileSystem: Importing file: res://assets/resources/coins.png
 [  68% ] [90m[1mreimport[22m | logistics.png[39m[0m
+EditorFileSystem: "res://assets/buildings/market1.png" import took 19 ms.
+EditorFileSystem: Importing file: res://assets/resources/coins.png
 [  70% ] [90m[1mreimport[22m | kiln.png[39m[0m
-EditorFileSystem: "res://assets/resources/coins.png" import took 8 ms.
+EditorFileSystem: "res://assets/buildings/logistics.png" import took 19 ms.
 EditorFileSystem: Importing file: res://assets/resources/clay_jar.png
 [  71% ] [90m[1mreimport[22m | bakery.png[39m[0m
-EditorFileSystem: "res://assets/buildings/kiln.png" import took 14 ms.
+EditorFileSystem: "res://assets/resources/coins.png" import took 4 ms.
 EditorFileSystem: Importing file: res://assets/resources/bricks.png
 [  72% ] [90m[1mreimport[22m | coins.png[39m[0m
-EditorFileSystem: "res://assets/resources/bricks.png" import took 4 ms.
+EditorFileSystem: "res://assets/resources/clay_jar.png" import took 4 ms.
 EditorFileSystem: Importing file: res://assets/resources/bread.png
-EditorFileSystem: "res://assets/resources/clay_jar.png" import took 7 ms.
-EditorFileSystem: Importing file: res://assets/resources/basket.png
-EditorFileSystem: "res://assets/buildings/bakery.png" import took 17 ms.
-EditorFileSystem: Importing file: res://assets/characters/resident3.png
 [  74% ] [90m[1mreimport[22m | clay_jar.png[39m[0m
+EditorFileSystem: "res://assets/resources/bricks.png" import took 4 ms.
+EditorFileSystem: Importing file: res://assets/resources/basket.png
 [  75% ] [90m[1mreimport[22m | bricks.png[39m[0m
+EditorFileSystem: "res://assets/resources/bread.png" import took 5 ms.
+EditorFileSystem: Importing file: res://assets/characters/resident3.png
 [  77% ] [90m[1mreimport[22m | bread.png[39m[0m
-EditorFileSystem: "res://assets/resources/bread.png" import took 4 ms.
+EditorFileSystem: "res://assets/resources/basket.png" import took 5 ms.
 EditorFileSystem: Importing file: res://assets/characters/resident2.png
 [  78% ] [90m[1mreimport[22m | basket.png[39m[0m
-EditorFileSystem: "res://assets/characters/resident3.png" import took 9 ms.
+EditorFileSystem: "res://assets/buildings/bakery.png" import took 17 ms.
 EditorFileSystem: Importing file: res://assets/characters/resident1.png
 [  79% ] [90m[1mreimport[22m | resident3.png[39m[0m
-EditorFileSystem: "res://assets/resources/basket.png" import took 11 ms.
+EditorFileSystem: "res://assets/characters/resident3.png" import took 9 ms.
 EditorFileSystem: Importing file: res://assets/characters/player_walk_v2.webp
-EditorFileSystem: "res://assets/characters/resident2.png" import took 9 ms.
-EditorFileSystem: Importing file: res://assets/characters/player_walk.png
 [  81% ] [90m[1mreimport[22m | resident2.png[39m[0m
+EditorFileSystem: "res://assets/characters/resident2.png" import took 10 ms.
+EditorFileSystem: Importing file: res://assets/characters/player_walk.png
 [  82% ] [90m[1mreimport[22m | resident1.png[39m[0m
 EditorFileSystem: "res://assets/characters/resident1.png" import took 10 ms.
 EditorFileSystem: Importing file: res://assets/characters/player_front.png
 [  83% ] [90m[1mreimport[22m | player_walk_v2.webp[39m[0m
-EditorFileSystem: "res://assets/characters/player_front.png" import took 22 ms.
+EditorFileSystem: "res://assets/characters/player_front.png" import took 21 ms.
 EditorFileSystem: Importing file: res://assets/characters/player.png
 [  85% ] [90m[1mreimport[22m | player_walk.png[39m[0m
-EditorFileSystem: "res://assets/characters/player.png" import took 53 ms.
+EditorFileSystem: "res://assets/characters/player.png" import took 58 ms.
 EditorFileSystem: Importing file: res://assets/characters/hauler_log.png
 [  86% ] [90m[1mreimport[22m | player_front.png[39m[0m
-EditorFileSystem: "res://assets/characters/player_walk.png" import took 97 ms.
+EditorFileSystem: "res://assets/characters/player_walk.png" import took 95 ms.
 EditorFileSystem: Importing file: res://assets/characters/hauler_cart.png
 [  87% ] [90m[1mreimport[22m | player.png[39m[0m
-EditorFileSystem: "res://assets/characters/hauler_log.png" import took 15 ms.
+EditorFileSystem: "res://assets/characters/hauler_log.png" import took 17 ms.
 EditorFileSystem: Importing file: res://assets/characters/hauler_baskets.png
 [  89% ] [90m[1mreimport[22m | hauler_log.png[39m[0m
-EditorFileSystem: "res://assets/characters/hauler_cart.png" import took 20 ms.
+EditorFileSystem: "res://assets/characters/hauler_cart.png" import took 22 ms.
 EditorFileSystem: Importing file: res://assets/characters/customer3.png
-EditorFileSystem: "res://assets/characters/hauler_baskets.png" import took 20 ms.
-EditorFileSystem: Importing file: res://assets/characters/customer2.png
 [  90% ] [90m[1mreimport[22m | hauler_cart.png[39m[0m
+EditorFileSystem: "res://assets/characters/hauler_baskets.png" import took 21 ms.
+EditorFileSystem: Importing file: res://assets/characters/customer2.png
 [  91% ] [90m[1mreimport[22m | hauler_baskets.png[39m[0m
-EditorFileSystem: "res://assets/characters/customer2.png" import took 9 ms.
-EditorFileSystem: Importing file: res://assets/characters/customer1.png
 EditorFileSystem: "res://assets/characters/customer3.png" import took 10 ms.
-EditorFileSystem: Importing file: res://assets/buildings/warehouse.png
+EditorFileSystem: Importing file: res://assets/characters/customer1.png
 [  93% ] [90m[1mreimport[22m | customer3.png[39m[0m
+EditorFileSystem: "res://assets/characters/customer2.png" import took 10 ms.
+EditorFileSystem: Importing file: res://assets/buildings/warehouse.png
 [  94% ] [90m[1mreimport[22m | customer2.png[39m[0m
-EditorFileSystem: "res://assets/characters/customer1.png" import took 9 ms.
+EditorFileSystem: "res://assets/characters/customer1.png" import took 11 ms.
 [  95% ] [90m[1mreimport[22m | customer1.png[39m[0m
-EditorFileSystem: "res://assets/buildings/warehouse.png" import took 26 ms.
+EditorFileSystem: "res://assets/buildings/warehouse.png" import took 34 ms.
 [  97% ] [90m[1mreimport[22m | warehouse.png[39m[0m
-EditorFileSystem: "res://assets/characters/player_walk_v2.webp" import took 223 ms.
+EditorFileSystem: "res://assets/characters/player_walk_v2.webp" import took 179 ms.
 [  98% ] [90m[1mreimport[22m | Finalizing Asset Import...[39m[0m
 [92m[ DONE ][39m [1mreimport[22m
 [0m
@@ -846,12 +846,6 @@ EditorFileSystem: "res://assets/characters/player_walk_v2.webp" import took 223 
 [0m
 Loading resource: res://scenes/main.tscn remapped: res://scenes/main.tscn
 Loading resource: res://scripts/main.gd remapped: res://scripts/main.gd
-SCRIPT ERROR: Parse Error: The variable type is being inferred from a Variant value, so it will be typed as Variant. (Warning treated as error.)
-          at: GDScript::reload (res://scripts/engagement_manager.gd:233)
-SCRIPT ERROR: Compile Error: Failed to compile depended scripts.
-          at: GDScript::reload (res://scripts/main.gd:0)
-ERROR: Failed to load script "res://scripts/main.gd" with error "Parse error".
-   at: load (modules/gdscript/gdscript_resource_format.cpp:46)
 Completed load for: 'res://scripts/main.gd' remapped 'res://scripts/main.gd' at thread -1
 Completed load for: 'res://scenes/main.tscn' remapped 'res://scenes/main.tscn' at thread -1
 Script docs haven't been properly loaded or regenerated, so don't save them to disk.
