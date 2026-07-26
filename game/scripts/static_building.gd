@@ -81,6 +81,7 @@ func refresh() -> void:
             _label.text = display_name.to_upper()
     if path != "" and (_sprite.texture == null or _sprite.texture.resource_path != path):
         _sprite.texture = load(path)
+    _apply_safe_region_crop(path)
     var rendered_scale := visual_scale * 1.15
     _sprite.scale = Vector2.ONE * rendered_scale
     _sprite.position.y = -maxf(45.0, (_sprite.texture.get_height() if _sprite.texture else 180) * rendered_scale * 0.50)
@@ -88,6 +89,28 @@ func refresh() -> void:
         var footprint_x: float = clampf(float(_sprite.texture.get_width()) * rendered_scale * 0.28, 125.0, 260.0)
         _shadow.polygon = _ellipse_points(Vector2.ZERO, Vector2(footprint_x, footprint_x * 0.25), 30)
         _shadow.position = Vector2(18, 8)
+
+func _apply_safe_region_crop(path: String) -> void:
+    if not _sprite or not _sprite.texture:
+        return
+    var left_margin: float = 0.0
+    var right_margin: float = 0.0
+    if path.ends_with("/market.webp"):
+        left_margin = 40.0
+    elif path.ends_with("/warehouse.webp"):
+        left_margin = 52.0
+    if left_margin <= 0.0 and right_margin <= 0.0:
+        _sprite.region_enabled = false
+        return
+    var texture_size: Vector2 = _sprite.texture.get_size()
+    _sprite.region_enabled = true
+    _sprite.region_rect = Rect2(
+        left_margin,
+        0.0,
+        maxf(1.0, texture_size.x - left_margin - right_margin),
+        texture_size.y
+    )
+
 
 func _on_input_event(_viewport: Node, event: InputEvent, _shape_idx: int) -> void:
     var activate := false
