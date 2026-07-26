@@ -47,7 +47,7 @@ func _ready() -> void:
 
 func _process(delta: float) -> void:
     _walk_time += delta
-    speed = (180.0 + float(GameState.hauler_level) * 28.0) * float(GameState.tuning["worker_speed_multiplier"])
+    speed = (180.0 + float(GameState.hauler_level) * 28.0) * float(GameState.tuning["worker_speed_multiplier"]) * GameState.worker_efficiency()
     carry_capacity = 7.0 + float(GameState.hauler_level) * 5.0
 
     match state:
