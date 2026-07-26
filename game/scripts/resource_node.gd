@@ -37,6 +37,7 @@ func _ready() -> void:
     _sprite = Sprite2D.new()
     if texture_path != "":
         _sprite.texture = load(texture_path)
+    _apply_safe_region_crop()
     _sprite.scale = Vector2.ONE * visual_scale * 1.50
     _sprite.position.y = -maxf(15.0, (_sprite.texture.get_height() if _sprite.texture else 100) * visual_scale * 1.50 * 0.50)
     if _sprite.texture:
@@ -45,6 +46,30 @@ func _ready() -> void:
         _shadow.position = Vector2(7, 3)
     add_child(_sprite)
     queue_redraw()
+
+func _apply_safe_region_crop() -> void:
+    if not _sprite or not _sprite.texture:
+        return
+    var left_margin: float = 0.0
+    var right_margin: float = 0.0
+    if texture_path.ends_with("/grain.webp"):
+        left_margin = 28.0
+        right_margin = 6.0
+    elif texture_path.ends_with("/papyrus.webp"):
+        left_margin = 28.0
+        right_margin = 6.0
+    if left_margin <= 0.0 and right_margin <= 0.0:
+        _sprite.region_enabled = false
+        return
+    var texture_size: Vector2 = _sprite.texture.get_size()
+    _sprite.region_enabled = true
+    _sprite.region_rect = Rect2(
+        left_margin,
+        0.0,
+        maxf(1.0, texture_size.x - left_margin - right_margin),
+        texture_size.y
+    )
+
 
 func _process(delta: float) -> void:
     if not active:
