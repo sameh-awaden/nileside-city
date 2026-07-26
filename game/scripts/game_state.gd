@@ -172,7 +172,7 @@ func production_efficiency() -> float:
             efficiency *= 0.78
         elif administration_ratio < 0.40:
             efficiency *= 0.90
-    return maxf(0.55, efficiency)
+    return maxf(0.50, efficiency)
 
 
 func worker_efficiency() -> float:
