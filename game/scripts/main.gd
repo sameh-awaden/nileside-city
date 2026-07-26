@@ -1146,7 +1146,7 @@ func _display_engagement_message(message: Dictionary) -> void:
 func _focus_message_target() -> void:
     if message_focus == Vector2.ZERO:
         return
-    var destination := message_focus - player.global_position + Vector2(0, -110)
+    var destination: Vector2 = message_focus - player.global_position + Vector2(0, -110)
     var tween := create_tween()
     tween.tween_property(camera, "position", destination, 0.45).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
     tween.tween_interval(1.0)
