@@ -34,7 +34,7 @@ func _process_sales(delta: float) -> void:
     for resource_name in lane_names:
         var lane: Dictionary = lanes[resource_name]
         lane["timer"] = float(lane["timer"]) + delta
-        var service_interval: float = maxf(0.18, 1.15 / (1.0 + float(GameState.market_level) * 0.18) / float(GameState.tuning["demand_multiplier"]))
+        var service_interval: float = maxf(0.18, 1.15 / (1.0 + float(GameState.market_level) * 0.18) / float(GameState.tuning["demand_multiplier"]) / GameState.market_efficiency())
         if float(lane["timer"]) < service_interval:
             continue
         lane["timer"] = 0.0
