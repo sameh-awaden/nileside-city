@@ -29,13 +29,10 @@ func _add_tiled_ground() -> void:
     add_child(ground)
 
 func _add_water_and_fields() -> void:
-    var water := TextureRect.new()
+    var water := ColorRect.new()
     water.position = Vector2(-2200, -3000)
     water.size = Vector2(640, 6000)
-    water.texture = load("res://assets/terrain/nile_water.webp")
-    water.texture_repeat = CanvasItem.TEXTURE_REPEAT_ENABLED
-    water.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
-    water.stretch_mode = TextureRect.STRETCH_TILE
+    water.color = Color("2f9eb5")
     water.mouse_filter = Control.MOUSE_FILTER_IGNORE
     water.z_index = -19
     add_child(water)
@@ -93,8 +90,18 @@ func _add_textured_road(points: PackedVector2Array) -> void:
 func _draw() -> void:
     # Nile and irrigated farmland use layered color plus drawn detail over the sand tile.
 
-    for y in range(-2900, 3000, 150):
-        draw_line(Vector2(-2160, y), Vector2(-1600, y + 40), Color(0.75, 0.94, 0.95, 0.24), 5.0)
+    for y in range(-2940, 3000, 92):
+        var wave_points := PackedVector2Array()
+        for x in range(-2180, -1580, 36):
+            var wave_y: float = float(y) + sin(float(x + y) * 0.022) * 12.0
+            wave_points.append(Vector2(float(x), wave_y))
+        draw_polyline(wave_points, Color(0.78, 0.96, 0.98, 0.22), 4.0, true)
+
+    var water_rng := RandomNumberGenerator.new()
+    water_rng.seed = 44129
+    for i in range(190):
+        var sparkle := Vector2(water_rng.randf_range(-2170, -1590), water_rng.randf_range(-2980, 2980))
+        draw_circle(sparkle, water_rng.randf_range(1.0, 3.5), Color(0.88, 1.0, 1.0, 0.16))
     for y in range(-2960, 3000, 72):
         draw_line(Vector2(-1460, y), Vector2(-1050, y + 8), Color(0.20, 0.36, 0.16, 0.16), 3.0)
 
