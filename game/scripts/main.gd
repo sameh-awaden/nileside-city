@@ -74,6 +74,9 @@ var engagement_view: String = ""
 var celebration_panel: Panel
 var celebration_title: Label
 var celebration_body: Label
+var demand_panel: Panel
+var demand_bars: Dictionary = {}
+var demand_labels: Dictionary = {}
 
 func _ready() -> void:
     process_mode = Node.PROCESS_MODE_ALWAYS
@@ -447,15 +450,99 @@ func _build_ui() -> void:
     raw_resource_label.add_theme_stylebox_override("normal", _panel_style(Color(0.025, 0.08, 0.10, 0.90), Color("b88a3d"), 2, 18))
     ui_root.add_child(raw_resource_label)
 
+    _build_demand_bars()
     _build_engagement_ui()
 
     admin_panel = ADMIN_PANEL_SCRIPT.new()
     admin_panel.setup(self)
     ui_root.add_child(admin_panel)
 
+func _build_demand_bars() -> void:
+    demand_panel = Panel.new()
+    demand_panel.position = Vector2(18, 312)
+    demand_panel.size = Vector2(1044, 62)
+    demand_panel.add_theme_stylebox_override(
+        "panel",
+        _panel_style(Color(0.025, 0.07, 0.09, 0.76), Color(0.70, 0.52, 0.24, 0.50), 2, 18)
+    )
+    ui_root.add_child(demand_panel)
+
+    var configs: Array[Dictionary] = [
+        {"key": "food", "title": "FOOD", "x": 14.0},
+        {"key": "comfort", "title": "COMFORT", "x": 356.0},
+        {"key": "administration", "title": "ADMIN", "x": 698.0},
+    ]
+    for config in configs:
+        var key: String = String(config["key"])
+        var label: Label = _create_label(String(config["title"]), 17, Color("fff0bd"), HORIZONTAL_ALIGNMENT_CENTER)
+        label.position = Vector2(float(config["x"]), 2)
+        label.size = Vector2(330, 25)
+        demand_panel.add_child(label)
+        demand_labels[key] = label
+
+        var bar := ProgressBar.new()
+        bar.position = Vector2(float(config["x"]) + 10.0, 31)
+        bar.size = Vector2(310, 20)
+        bar.min_value = 0.0
+        bar.max_value = 100.0
+        bar.value = 100.0
+        bar.show_percentage = false
+        bar.mouse_filter = Control.MOUSE_FILTER_IGNORE
+        bar.add_theme_stylebox_override(
+            "background",
+            _panel_style(Color(0.01, 0.025, 0.035, 0.82), Color(0.75, 0.63, 0.38, 0.30), 1, 9)
+        )
+        demand_panel.add_child(bar)
+        demand_bars[key] = bar
+
+
+func _update_demand_bars() -> void:
+    if demand_bars.is_empty():
+        return
+    var needs: Dictionary = GameState.local_need_ratios()
+    _update_demand_bar("food", float(needs["food"]), false)
+    _update_demand_bar("comfort", float(needs["comfort"]), GameState.city_level < 4)
+    _update_demand_bar("administration", float(needs["administration"]), GameState.city_level < 4)
+
+
+func _update_demand_bar(key: String, ratio: float, locked: bool) -> void:
+    var bar: ProgressBar = demand_bars[key]
+    var label: Label = demand_labels[key]
+    var title: String = "ADMIN" if key == "administration" else key.to_upper()
+    var fill_color := Color("57b86a")
+    var status: String = "%d%%" % int(round(ratio * 100.0))
+
+    if locked:
+        bar.value = 100.0
+        fill_color = Color(0.36, 0.42, 0.44, 0.62)
+        label.text = "%s • UNLOCKS CITY 4" % title
+    else:
+        bar.value = clampf(ratio, 0.0, 1.0) * 100.0
+        if ratio < 0.15:
+            fill_color = Color("d9534f")
+            if key == "food":
+                status = "CRITICAL • PRODUCTION -50%"
+            elif key == "comfort":
+                status = "CRITICAL • SALES -35%"
+            else:
+                status = "CRITICAL • WORKERS -18%"
+        elif ratio < 0.40:
+            fill_color = Color("e28b34")
+            status = "LOW • %d%%" % int(round(ratio * 100.0))
+        elif ratio < 0.70:
+            fill_color = Color("d8b544")
+            status = "%d%%" % int(round(ratio * 100.0))
+        label.text = "%s • %s" % [title, status]
+
+    bar.add_theme_stylebox_override(
+        "fill",
+        _panel_style(fill_color, Color(1.0, 1.0, 1.0, 0.18), 1, 9)
+    )
+
+
 func _build_engagement_ui() -> void:
     objective_button = Button.new()
-    objective_button.position = Vector2(18, 316)
+    objective_button.position = Vector2(18, 386)
     objective_button.size = Vector2(790, 82)
     objective_button.add_theme_font_size_override("font_size", 22)
     objective_button.add_theme_color_override("font_color", Color("fff2c2"))
@@ -465,7 +552,7 @@ func _build_engagement_ui() -> void:
     ui_root.add_child(objective_button)
 
     contracts_button = Button.new()
-    contracts_button.position = Vector2(820, 316)
+    contracts_button.position = Vector2(820, 386)
     contracts_button.size = Vector2(222, 82)
     contracts_button.add_theme_font_size_override("font_size", 20)
     contracts_button.add_theme_color_override("font_color", Color("fff2c2"))
@@ -475,9 +562,9 @@ func _build_engagement_ui() -> void:
     ui_root.add_child(contracts_button)
 
     message_toast = Button.new()
-    message_toast.position = Vector2(90, 420)
-    message_toast.size = Vector2(900, 96)
-    message_toast.add_theme_font_size_override("font_size", 24)
+    message_toast.position = Vector2(170, 484)
+    message_toast.size = Vector2(740, 62)
+    message_toast.add_theme_font_size_override("font_size", 19)
     message_toast.add_theme_color_override("font_color", Color.WHITE)
     message_toast.visible = false
     message_toast.pressed.connect(_focus_message_target)
@@ -952,6 +1039,7 @@ func _update_ui() -> void:
     else:
         goal_label.text = "BUILD THE NILE CITY"
     _update_engagement_ui()
+    _update_demand_bars()
     _refresh_selection_panel()
 
 func _read_save_file() -> void:
@@ -1117,30 +1205,30 @@ func _show_engagement_message(text_value: String, kind: String, focus_position: 
 func _display_engagement_message(message: Dictionary) -> void:
     message_toast.text = String(message["text"])
     message_focus = Vector2(message["focus"])
-    message_time_left = 4.5
+    message_time_left = 3.2
     message_toast.visible = true
 
     var kind := String(message["kind"])
-    var background := Color(0.04, 0.15, 0.20, 0.97)
+    var background := Color(0.04, 0.15, 0.20, 0.70)
     var border := Color("d7a43c")
     if kind == "success":
-        background = Color(0.12, 0.38, 0.19, 0.97)
+        background = Color(0.12, 0.38, 0.19, 0.72)
         border = Color("8fe69b")
     elif kind == "warning":
-        background = Color(0.48, 0.25, 0.06, 0.97)
+        background = Color(0.48, 0.25, 0.06, 0.76)
         border = Color("ffd36a")
     elif kind == "critical":
-        background = Color(0.48, 0.10, 0.07, 0.98)
+        background = Color(0.48, 0.10, 0.07, 0.80)
         border = Color("ff9a80")
     elif kind in ["event", "contract"]:
-        background = Color(0.18, 0.20, 0.48, 0.98)
+        background = Color(0.18, 0.20, 0.48, 0.74)
         border = Color("e4c2ff")
     elif kind == "guide":
-        background = Color(0.08, 0.29, 0.42, 0.98)
+        background = Color(0.08, 0.29, 0.42, 0.74)
         border = Color("81d8ff")
 
-    message_toast.add_theme_stylebox_override("normal", _panel_style(background, border, 4, 24))
-    message_toast.add_theme_stylebox_override("pressed", _panel_style(background.lightened(0.08), Color.WHITE, 4, 24))
+    message_toast.add_theme_stylebox_override("normal", _panel_style(background, border, 2, 18))
+    message_toast.add_theme_stylebox_override("pressed", _panel_style(background.lightened(0.08), Color.WHITE, 2, 18))
 
 
 func _focus_message_target() -> void:
