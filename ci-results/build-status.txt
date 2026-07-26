@@ -1,8 +1,8 @@
-run_id=30216191371
-commit=e9f564d6f67215a63ec38183a2e720180243d371
-import_outcome=success
-startup_outcome=success
-export_outcome=success
-find_apk_outcome=success
-artifact_outcome=success
-generated_at=2026-07-26T19:08:57Z
+run_id=30217577837
+commit=789a149e02eddf55d61c0c2cd9fb8c327da67e33
+import_outcome=cancelled
+startup_outcome=skipped
+export_outcome=skipped
+find_apk_outcome=skipped
+artifact_outcome=skipped
+generated_at=2026-07-26T19:47:23Z
