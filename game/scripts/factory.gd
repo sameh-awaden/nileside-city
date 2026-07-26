@@ -55,6 +55,7 @@ func _ready() -> void:
     _sprite = Sprite2D.new()
     if texture_path != "":
         _sprite.texture = load(texture_path)
+    _apply_safe_region_crop()
     var rendered_scale := visual_scale * 1.25
     _sprite.scale = Vector2.ONE * rendered_scale
     _sprite.position.y = -maxf(40.0, (_sprite.texture.get_height() if _sprite.texture else 150) * rendered_scale * 0.50)
@@ -102,11 +103,38 @@ func _ready() -> void:
     GameState.city_changed.connect(_refresh_visuals)
     _refresh_visuals()
 
+func _apply_safe_region_crop() -> void:
+    if not _sprite or not _sprite.texture:
+        return
+    var left_margin: float = 0.0
+    var right_margin: float = 0.0
+    if texture_path.ends_with("/bakery.webp"):
+        left_margin = 24.0
+    elif texture_path.ends_with("/sawmill.webp"):
+        right_margin = 24.0
+    elif texture_path.ends_with("/pottery.webp"):
+        right_margin = 28.0
+    elif texture_path.ends_with("/scribe.webp"):
+        left_margin = 20.0
+        right_margin = 12.0
+    if left_margin <= 0.0 and right_margin <= 0.0:
+        _sprite.region_enabled = false
+        return
+    var texture_size: Vector2 = _sprite.texture.get_size()
+    _sprite.region_enabled = true
+    _sprite.region_rect = Rect2(
+        left_margin,
+        0.0,
+        maxf(1.0, texture_size.x - left_margin - right_margin),
+        texture_size.y
+    )
+
+
 func _process(delta: float) -> void:
     if not is_unlocked() or level <= 0:
         return
 
-    cycle_progress += delta * float(GameState.tuning["production_multiplier"])
+    cycle_progress += delta * float(GameState.tuning["production_multiplier"]) * GameState.production_efficiency()
     var cycle: float = effective_cycle_seconds()
     while cycle_progress >= cycle:
         cycle_progress -= cycle
@@ -134,7 +162,7 @@ func output_per_cycle() -> float:
 func production_per_minute() -> float:
     if level <= 0:
         return 0.0
-    return output_per_cycle() * 60.0 / effective_cycle_seconds() * float(GameState.tuning["production_multiplier"])
+    return output_per_cycle() * 60.0 / effective_cycle_seconds() * float(GameState.tuning["production_multiplier"]) * GameState.production_efficiency()
 
 func _try_produce() -> void:
     if output_buffer >= storage_capacity() - 0.001:
@@ -228,7 +256,7 @@ func upgrade_conveyor() -> bool:
 func simulate_offline(seconds: float) -> void:
     if level <= 0 or not is_unlocked():
         return
-    var cycles: float = floor(seconds / effective_cycle_seconds() * float(GameState.tuning["production_multiplier"]))
+    var cycles: float = floor(seconds / effective_cycle_seconds() * float(GameState.tuning["production_multiplier"]) * GameState.production_efficiency())
     if cycles <= 0.0:
         return
     var multiplier: float = production_multiplier()
