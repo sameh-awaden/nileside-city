@@ -12,12 +12,14 @@ const STATIC_BUILDING_SCRIPT := preload("res://scripts/static_building.gd")
 const RESOURCE_NODE_SCRIPT := preload("res://scripts/resource_node.gd")
 const ADMIN_PANEL_SCRIPT := preload("res://scripts/admin_panel.gd")
 const MARKET_CUSTOMER_SCRIPT := preload("res://scripts/market_customer.gd")
+const ENGAGEMENT_MANAGER_SCRIPT := preload("res://scripts/engagement_manager.gd")
 
 var world_root: Node2D
 var actors_root: Node2D
 var player = null
 var camera: Camera2D
 var market_manager = null
+var engagement_manager = null
 var factories: Array = []
 var conveyors: Array = []
 var workers: Array = []
@@ -56,25 +58,59 @@ var admin_tap_deadline: float = 0.0
 var admin_panel: Panel
 var raw_resource_label: Label
 
+# Engagement UI
+var objective_button: Button
+var contracts_button: Button
+var message_toast: Button
+var message_time_left: float = 0.0
+var message_focus := Vector2.ZERO
+var message_queue: Array = []
+var info_panel: Panel
+var info_title: Label
+var info_details: Label
+var contract_buttons: Array[Button] = []
+var deliver_contract_button: Button
+var engagement_view: String = ""
+var celebration_panel: Panel
+var celebration_title: Label
+var celebration_body: Label
+
 func _ready() -> void:
     process_mode = Node.PROCESS_MODE_ALWAYS
     _read_save_file()
     _build_world()
+
+    engagement_manager = ENGAGEMENT_MANAGER_SCRIPT.new()
+    engagement_manager.name = "EngagementManager"
+    add_child(engagement_manager)
+    engagement_manager.setup(market_manager, factories)
+
     _build_ui()
+
+    engagement_manager.message_requested.connect(_show_engagement_message)
+    engagement_manager.objective_changed.connect(_on_engagement_changed)
+    engagement_manager.contract_changed.connect(_on_engagement_changed)
+    engagement_manager.celebration_requested.connect(_show_celebration)
+
     _apply_pending_save()
     _simulate_offline_progress()
     _refresh_workers()
     _update_ui()
+    _update_engagement_ui()
 
     GameState.economy_changed.connect(_update_ui)
     GameState.city_changed.connect(_on_city_changed)
     market_manager.market_changed.connect(_update_ui)
+
+    if pending_save.is_empty():
+        engagement_manager.notify("Nebu the scribe: Follow the chapter goal to begin building the Nile settlement.", "guide")
 
     var boot_overlay := get_node_or_null("BootOverlay")
     if boot_overlay:
         boot_overlay.visible = false
 
     get_tree().auto_accept_quit = false
+
 
 func _process(delta: float) -> void:
     GameState.process_local_economy(delta)
@@ -87,6 +123,7 @@ func _process(delta: float) -> void:
 
     _auto_collect_treasury(delta)
     _update_customer_labels()
+    _process_engagement_ui(delta)
 
     if admin_tap_deadline > 0.0 and Time.get_ticks_msec() / 1000.0 > admin_tap_deadline:
         admin_tap_count = 0
@@ -410,14 +447,123 @@ func _build_ui() -> void:
     raw_resource_label.add_theme_stylebox_override("normal", _panel_style(Color(0.025, 0.08, 0.10, 0.90), Color("b88a3d"), 2, 18))
     ui_root.add_child(raw_resource_label)
 
+    _build_engagement_ui()
+
     admin_panel = ADMIN_PANEL_SCRIPT.new()
     admin_panel.setup(self)
     ui_root.add_child(admin_panel)
 
+func _build_engagement_ui() -> void:
+    objective_button = Button.new()
+    objective_button.position = Vector2(18, 316)
+    objective_button.size = Vector2(790, 82)
+    objective_button.add_theme_font_size_override("font_size", 22)
+    objective_button.add_theme_color_override("font_color", Color("fff2c2"))
+    objective_button.add_theme_stylebox_override("normal", _panel_style(Color(0.025, 0.12, 0.16, 0.95), Color("d7a43c"), 3, 22))
+    objective_button.add_theme_stylebox_override("pressed", _panel_style(Color("15547b"), Color("ffd96a"), 3, 22))
+    objective_button.pressed.connect(func(): _open_engagement_view("objective"))
+    ui_root.add_child(objective_button)
+
+    contracts_button = Button.new()
+    contracts_button.position = Vector2(820, 316)
+    contracts_button.size = Vector2(222, 82)
+    contracts_button.add_theme_font_size_override("font_size", 20)
+    contracts_button.add_theme_color_override("font_color", Color("fff2c2"))
+    contracts_button.add_theme_stylebox_override("normal", _panel_style(Color(0.12, 0.27, 0.35, 0.96), Color("d7a43c"), 3, 22))
+    contracts_button.add_theme_stylebox_override("pressed", _panel_style(Color("15547b"), Color("ffd96a"), 3, 22))
+    contracts_button.pressed.connect(func(): _open_engagement_view("contracts"))
+    ui_root.add_child(contracts_button)
+
+    message_toast = Button.new()
+    message_toast.position = Vector2(90, 420)
+    message_toast.size = Vector2(900, 96)
+    message_toast.add_theme_font_size_override("font_size", 24)
+    message_toast.add_theme_color_override("font_color", Color.WHITE)
+    message_toast.visible = false
+    message_toast.pressed.connect(_focus_message_target)
+    ui_root.add_child(message_toast)
+
+    info_panel = Panel.new()
+    info_panel.position = Vector2(42, 500)
+    info_panel.size = Vector2(996, 880)
+    info_panel.add_theme_stylebox_override("panel", _panel_style(Color(0.02, 0.055, 0.075, 0.98), Color("d7a43c"), 4, 30))
+    info_panel.visible = false
+    ui_root.add_child(info_panel)
+
+    info_title = _create_label("CITY OBJECTIVE", 34, Color("ffd96a"), HORIZONTAL_ALIGNMENT_LEFT)
+    info_title.position = Vector2(34, 24)
+    info_title.size = Vector2(800, 54)
+    info_panel.add_child(info_title)
+
+    var close_info := Button.new()
+    close_info.text = "×"
+    close_info.position = Vector2(890, 18)
+    close_info.size = Vector2(72, 64)
+    close_info.add_theme_font_size_override("font_size", 38)
+    close_info.pressed.connect(_close_engagement_view)
+    info_panel.add_child(close_info)
+
+    info_details = _create_label("", 25, Color("f4ecd5"), HORIZONTAL_ALIGNMENT_LEFT)
+    info_details.position = Vector2(34, 92)
+    info_details.size = Vector2(928, 120)
+    info_details.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+    info_details.vertical_alignment = VERTICAL_ALIGNMENT_TOP
+    info_panel.add_child(info_details)
+
+    for index in range(3):
+        var contract_button := _create_action_button(
+            info_panel,
+            Vector2(34, 224 + index * 146),
+            Vector2(928, 122),
+            "CONTRACT",
+            Color("15547b")
+        )
+        contract_button.add_theme_font_size_override("font_size", 22)
+        contract_button.pressed.connect(_select_contract.bind(index))
+        contract_buttons.append(contract_button)
+
+    deliver_contract_button = _create_action_button(
+        info_panel,
+        Vector2(190, 720),
+        Vector2(616, 92),
+        "DELIVER CONTRACT",
+        Color("4f9e56")
+    )
+    deliver_contract_button.pressed.connect(_deliver_contract)
+
+    celebration_panel = Panel.new()
+    celebration_panel.position = Vector2(90, 610)
+    celebration_panel.size = Vector2(900, 500)
+    celebration_panel.add_theme_stylebox_override("panel", _panel_style(Color(0.04, 0.10, 0.13, 0.99), Color("f1bf4a"), 6, 36))
+    celebration_panel.visible = false
+    ui_root.add_child(celebration_panel)
+
+    celebration_title = _create_label("CHAPTER COMPLETE", 42, Color("ffd96a"), HORIZONTAL_ALIGNMENT_CENTER)
+    celebration_title.position = Vector2(36, 46)
+    celebration_title.size = Vector2(828, 62)
+    celebration_panel.add_child(celebration_title)
+
+    celebration_body = _create_label("", 28, Color("fff4d4"), HORIZONTAL_ALIGNMENT_CENTER)
+    celebration_body.position = Vector2(60, 140)
+    celebration_body.size = Vector2(780, 190)
+    celebration_body.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+    celebration_body.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+    celebration_panel.add_child(celebration_body)
+
+    var celebration_continue := _create_action_button(
+        celebration_panel,
+        Vector2(220, 370),
+        Vector2(460, 82),
+        "CONTINUE",
+        Color("15547b")
+    )
+    celebration_continue.pressed.connect(_dismiss_celebration)
+
+
 func _build_menu_panel() -> void:
     menu_panel = Panel.new()
     menu_panel.position = Vector2(660, 340)
-    menu_panel.size = Vector2(382, 422)
+    menu_panel.size = Vector2(382, 606)
     menu_panel.add_theme_stylebox_override("panel", _panel_style(Color(0.025, 0.06, 0.08, 0.97), Color("d7a43c"), 4, 26))
     menu_panel.visible = false
     ui_root.add_child(menu_panel)
@@ -434,7 +580,13 @@ func _build_menu_panel() -> void:
     var zoom_in := _create_action_button(menu_panel, Vector2(200, 208), Vector2(160, 74), "ZOOM IN", Color("15547b"))
     zoom_in.pressed.connect(func(): _change_zoom(1.12))
 
-    var close_menu := _create_action_button(menu_panel, Vector2(22, 300), Vector2(338, 74), "CLOSE", Color("4f5960"))
+    var contracts_menu := _create_action_button(menu_panel, Vector2(22, 300), Vector2(338, 74), "TRADE CONTRACTS", Color("15547b"))
+    contracts_menu.pressed.connect(func(): _open_engagement_view("contracts"))
+
+    var messages_menu := _create_action_button(menu_panel, Vector2(22, 392), Vector2(338, 74), "CITY MESSAGES", Color("6d5326"))
+    messages_menu.pressed.connect(func(): _open_engagement_view("activity"))
+
+    var close_menu := _create_action_button(menu_panel, Vector2(22, 484), Vector2(338, 74), "CLOSE", Color("4f5960"))
     close_menu.pressed.connect(_toggle_menu)
 
 func _create_resource_card(parent: Control, x: float, icon_path: String, starting_text: String) -> Label:
@@ -755,14 +907,13 @@ func _refresh_workers() -> void:
 # Economy, save and menu
 # -----------------------------------------------------------------------------
 
-func _auto_collect_treasury(delta: float) -> void:
+func _auto_collect_treasury(_delta: float) -> void:
     if GameState.treasury < 0.1:
         return
-    if player.global_position.distance_to(market_position) > 175.0:
-        return
-    var transfer: float = minf(GameState.treasury, maxf(10.0, GameState.treasury * 3.5 * delta))
-    GameState.treasury -= transfer
+    var transfer := GameState.treasury
+    GameState.treasury = 0.0
     GameState.add_coins(transfer)
+
 
 func _on_city_changed() -> void:
     for factory in factories:
@@ -796,11 +947,11 @@ func _update_ui() -> void:
     population_label.text = "POP %d/%d" % [GameState.population, GameState.population_cap]
     reserve_label.text = "FOOD %.1f min" % GameState.food_minutes()
     trade_label.text = "TRADE %s" % _compact_number(market_manager.total_sold if market_manager else 0.0)
-    if GameState.city_level < 7:
-        var req: Dictionary = GameState.city_upgrade_requirements()
-        goal_label.text = "GOAL: Population %d/%d" % [GameState.population, int(req.get("population", GameState.population_cap))]
+    if engagement_manager:
+        goal_label.text = "CHAPTER %d/%d" % [mini(engagement_manager.chapter_index + 1, 10), 10]
     else:
-        goal_label.text = "GOAL: Expand the Nile capital"
+        goal_label.text = "BUILD THE NILE CITY"
+    _update_engagement_ui()
     _refresh_selection_panel()
 
 func _read_save_file() -> void:
@@ -834,6 +985,7 @@ func _apply_pending_save() -> void:
             player.global_position = Vector2(float(pos[0]), float(pos[1]))
     if pending_save.has("camera_zoom"):
         player.set_camera_zoom(float(pending_save["camera_zoom"]))
+    engagement_manager.from_dict(pending_save.get("engagement", {}))
 
 func _simulate_offline_progress() -> void:
     if pending_save.is_empty():
@@ -854,6 +1006,10 @@ func _simulate_offline_progress() -> void:
         if moved > 0.0:
             GameState.add_resource(factory.output_resource, moved)
     market_manager.simulate_offline(elapsed)
+    engagement_manager.notify(
+        "While you were away for %d minutes, residents ate, factories produced and the market continued trading." % int(elapsed / 60.0),
+        "info"
+    )
 
 func _save_game(show_feedback: bool = true) -> void:
     var saved_factories := {}
@@ -869,6 +1025,7 @@ func _save_game(show_feedback: bool = true) -> void:
         "game_state": GameState.to_dict(),
         "factories": saved_factories,
         "market": market_manager.to_dict(),
+        "engagement": engagement_manager.to_dict(),
         "player_position": [player.global_position.x, player.global_position.y],
         "camera_zoom": player.camera_zoom_value(),
         "last_timestamp": Time.get_unix_time_from_system(),
@@ -935,8 +1092,162 @@ func _open_dev_boost() -> void:
     if admin_panel:
         admin_panel.open_panel()
 
-func _on_player_harvested(_resource_name: String, _amount: float) -> void:
+func _on_player_harvested(resource_name: String, amount_value: float) -> void:
+    engagement_manager.record_harvest(resource_name, amount_value)
     _update_ui()
+
+func _process_engagement_ui(delta: float) -> void:
+    if message_toast.visible:
+        message_time_left -= delta
+        if message_time_left <= 0.0:
+            message_toast.visible = false
+            if not message_queue.is_empty():
+                var next_message: Dictionary = message_queue.pop_front()
+                _display_engagement_message(next_message)
+
+
+func _show_engagement_message(text_value: String, kind: String, focus_position: Vector2) -> void:
+    var message := {"text": text_value, "kind": kind, "focus": focus_position}
+    if message_toast.visible:
+        message_queue.append(message)
+    else:
+        _display_engagement_message(message)
+
+
+func _display_engagement_message(message: Dictionary) -> void:
+    message_toast.text = String(message["text"])
+    message_focus = Vector2(message["focus"])
+    message_time_left = 4.5
+    message_toast.visible = true
+
+    var kind := String(message["kind"])
+    var background := Color(0.04, 0.15, 0.20, 0.97)
+    var border := Color("d7a43c")
+    if kind == "success":
+        background = Color(0.12, 0.38, 0.19, 0.97)
+        border = Color("8fe69b")
+    elif kind == "warning":
+        background = Color(0.48, 0.25, 0.06, 0.97)
+        border = Color("ffd36a")
+    elif kind == "critical":
+        background = Color(0.48, 0.10, 0.07, 0.98)
+        border = Color("ff9a80")
+    elif kind in ["event", "contract"]:
+        background = Color(0.18, 0.20, 0.48, 0.98)
+        border = Color("e4c2ff")
+    elif kind == "guide":
+        background = Color(0.08, 0.29, 0.42, 0.98)
+        border = Color("81d8ff")
+
+    message_toast.add_theme_stylebox_override("normal", _panel_style(background, border, 4, 24))
+    message_toast.add_theme_stylebox_override("pressed", _panel_style(background.lightened(0.08), Color.WHITE, 4, 24))
+
+
+func _focus_message_target() -> void:
+    if message_focus == Vector2.ZERO:
+        return
+    var destination := message_focus - player.global_position + Vector2(0, -110)
+    var tween := create_tween()
+    tween.tween_property(camera, "position", destination, 0.45).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+    tween.tween_interval(1.0)
+    tween.tween_property(camera, "position", Vector2(0, -110), 0.55).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN_OUT)
+
+
+func _on_engagement_changed() -> void:
+    _update_engagement_ui()
+    if info_panel.visible:
+        _refresh_engagement_view()
+
+
+func _update_engagement_ui() -> void:
+    if not engagement_manager or not objective_button:
+        return
+    objective_button.text = "CHAPTER %d  •  %s\n%s" % [
+        mini(engagement_manager.chapter_index + 1, 10),
+        engagement_manager.objective_title().to_upper(),
+        engagement_manager.objective_progress()
+    ]
+
+    if engagement_manager.active_contract.is_empty():
+        contracts_button.text = "CONTRACTS\nCHOOSE"
+    else:
+        contracts_button.text = "ACTIVE CONTRACT\n%s" % engagement_manager.contract_progress()
+
+
+func _open_engagement_view(view_name: String) -> void:
+    engagement_view = view_name
+    menu_panel.visible = false
+    bottom_panel.visible = false
+    info_panel.visible = true
+    _refresh_engagement_view()
+
+
+func _close_engagement_view() -> void:
+    info_panel.visible = false
+    engagement_view = ""
+
+
+func _refresh_engagement_view() -> void:
+    for contract_button in contract_buttons:
+        contract_button.visible = false
+    deliver_contract_button.visible = false
+    info_details.position = Vector2(34, 92)
+    info_details.size = Vector2(928, 120)
+
+    match engagement_view:
+        "objective":
+            info_title.text = "CURRENT CHAPTER"
+            info_details.size = Vector2(928, 650)
+            info_details.text = "%s\n\n%s\n\nPROGRESS\n%s" % [
+                engagement_manager.objective_title(),
+                engagement_manager.objective_body(),
+                engagement_manager.objective_progress()
+            ]
+        "contracts":
+            if engagement_manager.active_contract.is_empty():
+                info_title.text = "CHOOSE A NILE CONTRACT"
+                info_details.text = "Select one request. The other offers will leave when you accept it."
+                for index in range(mini(3, engagement_manager.contract_offers.size())):
+                    contract_buttons[index].visible = true
+                    contract_buttons[index].text = engagement_manager.contract_offer_text(index)
+            else:
+                info_title.text = "ACTIVE TRADE CONTRACT"
+                info_details.size = Vector2(928, 520)
+                info_details.text = "%s\n\nWhen all requested goods are ready, deliver them for the full reward." % engagement_manager.active_contract_summary()
+                deliver_contract_button.visible = true
+                deliver_contract_button.disabled = not engagement_manager.can_deliver_contract()
+                deliver_contract_button.text = "DELIVER NOW" if not deliver_contract_button.disabled else "GOODS STILL NEEDED"
+        "activity":
+            info_title.text = "CITY MESSAGES"
+            info_details.size = Vector2(928, 700)
+            info_details.text = engagement_manager.recent_messages()
+
+
+func _select_contract(index: int) -> void:
+    if engagement_manager.select_contract(index):
+        _save_game(false)
+    _refresh_engagement_view()
+    _update_engagement_ui()
+
+
+func _deliver_contract() -> void:
+    if engagement_manager.deliver_active_contract():
+        _save_game(false)
+        _update_ui()
+    _refresh_engagement_view()
+
+
+func _show_celebration(title_value: String, body_value: String) -> void:
+    celebration_title.text = title_value
+    celebration_body.text = body_value
+    celebration_panel.visible = true
+
+
+func _dismiss_celebration() -> void:
+    celebration_panel.visible = false
+    _update_engagement_ui()
+    _save_game(false)
+
 
 func _format_cost(cost: Dictionary) -> String:
     if cost.is_empty():
