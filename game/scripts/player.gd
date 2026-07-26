@@ -36,9 +36,9 @@ func _ready() -> void:
     y_sort_enabled = true
 
     shadow = Polygon2D.new()
-    shadow.polygon = _ellipse_points(Vector2.ZERO, Vector2(62, 21), 30)
+    shadow.polygon = _ellipse_points(Vector2.ZERO, Vector2(56, 18), 30)
     shadow.color = Color(0.06, 0.03, 0.02, 0.32)
-    shadow.position = Vector2(10, 10)
+    shadow.position = Vector2(0, 6)
     shadow.z_index = -1
     add_child(shadow)
 
@@ -47,7 +47,7 @@ func _ready() -> void:
     body_sprite.hframes = 8
     body_sprite.frame = 0
     body_sprite.scale = Vector2(1.0, 1.0)
-    body_sprite.position = Vector2(0, -192)
+    body_sprite.position = Vector2(0, -132)
     body_sprite.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
     add_child(body_sprite)
 
@@ -56,7 +56,7 @@ func _ready() -> void:
     add_child(harvest_ring)
 
     sickle_container = Node2D.new()
-    sickle_container.z_index = 5
+    sickle_container.z_index = 0
     add_child(sickle_container)
     _rebuild_sickles()
 
@@ -170,7 +170,7 @@ func _animate_body() -> void:
     if moving:
         body_sprite.frame = int(_walk_time * 10.0) % 8
         body_sprite.flip_h = velocity.x < -3.0
-        body_sprite.position.y = -192.0
+        body_sprite.position.y = -132.0
         body_sprite.rotation = 0.0
         body_sprite.scale = Vector2(1.0, 1.0)
         var stride := absf(sin(_walk_time * 10.0 * PI))
@@ -178,7 +178,7 @@ func _animate_body() -> void:
         shadow.modulate.a = 0.92 - stride * 0.10
     else:
         body_sprite.frame = 1
-        body_sprite.position.y = -192.0 + sin(_walk_time * 2.1) * 1.2
+        body_sprite.position.y = -132.0 + sin(_walk_time * 2.1) * 1.2
         body_sprite.rotation = 0.0
         body_sprite.scale = Vector2(1.0, 1.0)
         shadow.scale = Vector2.ONE
@@ -221,7 +221,7 @@ func _update_sickles() -> void:
         var phase := _sickle_angle + TAU * float(i) / float(sickles.size())
         sickles[i].position = Vector2(cos(phase), sin(phase) * 0.58) * radius
         sickles[i].rotation = phase + PI * 0.5
-        sickles[i].z_index = 4 if sin(phase) > 0.0 else -2
+        sickles[i].z_index = 2 if sin(phase) > 0.0 else -2
     if harvest_ring and harvest_ring.has_method("set_radius"):
         harvest_ring.set_radius(harvest_radius())
 
