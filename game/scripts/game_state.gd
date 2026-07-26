@@ -42,6 +42,7 @@ var tuning: Dictionary = {
 
 var _food_accumulator: float = 0.0
 var _growth_accumulator: float = 0.0
+var _local_goods_accumulator: float = 0.0
 
 func reset() -> void:
     city_level = 1
@@ -76,6 +77,7 @@ func reset() -> void:
     }
     _food_accumulator = 0.0
     _growth_accumulator = 0.0
+    _local_goods_accumulator = 0.0
     economy_changed.emit()
     city_changed.emit()
 
@@ -126,18 +128,102 @@ func food_minutes() -> float:
         return 999.0
     return local_food_points() / use_rate
 
+
+func comfort_target() -> float:
+    return maxf(12.0, float(population) * 0.45)
+
+
+func administration_target() -> float:
+    return maxf(10.0, float(population) * 0.30)
+
+
+func local_need_ratios() -> Dictionary:
+    var food_ratio: float = clampf(food_minutes() / 20.0, 0.0, 1.0)
+    var comfort_ratio: float = 1.0
+    var administration_ratio: float = 1.0
+    if city_level >= 4:
+        comfort_ratio = clampf(amount("pottery") / comfort_target(), 0.0, 1.0)
+        administration_ratio = clampf(amount("scrolls") / administration_target(), 0.0, 1.0)
+    return {
+        "food": food_ratio,
+        "comfort": comfort_ratio,
+        "administration": administration_ratio,
+    }
+
+
+func production_efficiency() -> float:
+    var needs: Dictionary = local_need_ratios()
+    var efficiency: float = 1.0
+    var food_ratio: float = float(needs["food"])
+    if food_ratio < 0.15:
+        efficiency *= 0.50
+    elif food_ratio < 0.35:
+        efficiency *= 0.68
+    elif food_ratio < 0.60:
+        efficiency *= 0.82
+    if city_level >= 4:
+        var comfort_ratio: float = float(needs["comfort"])
+        var administration_ratio: float = float(needs["administration"])
+        if comfort_ratio < 0.15:
+            efficiency *= 0.72
+        elif comfort_ratio < 0.40:
+            efficiency *= 0.86
+        if administration_ratio < 0.15:
+            efficiency *= 0.78
+        elif administration_ratio < 0.40:
+            efficiency *= 0.90
+    return maxf(0.55, efficiency)
+
+
+func worker_efficiency() -> float:
+    var needs: Dictionary = local_need_ratios()
+    var efficiency: float = 1.0
+    if float(needs["food"]) < 0.15:
+        efficiency *= 0.60
+    elif float(needs["food"]) < 0.40:
+        efficiency *= 0.80
+    if city_level >= 4 and float(needs["administration"]) < 0.20:
+        efficiency *= 0.82
+    return maxf(0.60, efficiency)
+
+
+func market_efficiency() -> float:
+    if city_level < 4:
+        return 1.0
+    var comfort_ratio: float = float(local_need_ratios()["comfort"])
+    if comfort_ratio < 0.15:
+        return 0.65
+    if comfort_ratio < 0.40:
+        return 0.82
+    return 1.0
+
+
+func population_growth_allowed() -> bool:
+    var needs: Dictionary = local_need_ratios()
+    if float(needs["food"]) < 0.25:
+        return false
+    if city_level >= 4:
+        return float(needs["comfort"]) >= 0.15 and float(needs["administration"]) >= 0.15
+    return true
+
 func process_local_economy(delta: float) -> void:
     _food_accumulator += delta
     _growth_accumulator += delta
+    _local_goods_accumulator += delta
 
     if _food_accumulator >= 1.0:
         var seconds: float = _food_accumulator
         _food_accumulator = 0.0
         _consume_food(food_use_per_minute() * seconds / 60.0)
 
+    if _local_goods_accumulator >= 2.0:
+        var local_seconds: float = _local_goods_accumulator
+        _local_goods_accumulator = 0.0
+        _consume_household_goods(local_seconds)
+
     if _growth_accumulator >= 90.0:
         _growth_accumulator = 0.0
-        if population < population_cap and food_minutes() >= 5.0:
+        if population < population_cap and population_growth_allowed():
             population += 1
             city_changed.emit()
 
@@ -156,14 +242,28 @@ func _consume_food(points: float) -> void:
             remaining -= grain_used
 
 
+func _consume_household_goods(seconds: float) -> void:
+    if city_level < 4 or seconds <= 0.0:
+        return
+    var pottery_needed: float = maxf(0.08, float(population) / 90.0) * seconds / 60.0
+    var scrolls_needed: float = maxf(0.06, float(population) / 130.0) * seconds / 60.0
+    var pottery_used: float = minf(amount("pottery"), pottery_needed)
+    var scrolls_used: float = minf(amount("scrolls"), scrolls_needed)
+    if pottery_used > 0.0:
+        take_resource("pottery", pottery_used)
+    if scrolls_used > 0.0:
+        take_resource("scrolls", scrolls_used)
+
+
 func simulate_offline(seconds: float) -> void:
     var bounded: float = clampf(seconds, 0.0, 8.0 * 3600.0)
     if bounded <= 0.0:
         return
     _consume_food(food_use_per_minute() * bounded / 60.0)
+    _consume_household_goods(bounded)
     var growth_steps: int = int(floor(bounded / 90.0))
     for i in range(growth_steps):
-        if population >= population_cap or food_minutes() < 5.0:
+        if population >= population_cap or not population_growth_allowed():
             break
         population += 1
     economy_changed.emit()
@@ -223,6 +323,7 @@ func to_dict() -> Dictionary:
         "tuning": tuning.duplicate(true),
         "food_accumulator": _food_accumulator,
         "growth_accumulator": _growth_accumulator,
+        "local_goods_accumulator": _local_goods_accumulator,
     }
 
 func from_dict(data: Dictionary) -> void:
@@ -245,5 +346,6 @@ func from_dict(data: Dictionary) -> void:
 
     _food_accumulator = maxf(0.0, float(data.get("food_accumulator", 0.0)))
     _growth_accumulator = maxf(0.0, float(data.get("growth_accumulator", 0.0)))
+    _local_goods_accumulator = maxf(0.0, float(data.get("local_goods_accumulator", 0.0)))
     economy_changed.emit()
     city_changed.emit()
