@@ -1,4 +1,5 @@
 name: Diagnose Nileside Startup
+# Validation refresh: anchored player, clean sprite regions, and local demand bars
 
 on:
   workflow_dispatch:
