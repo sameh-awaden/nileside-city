@@ -1,5 +1,5 @@
 name: Build Nileside City APK
-# Source refresh: proportional scene framing, saved pinch zoom, and reliable result publishing
+# Source refresh: anchored sprites, continuous Nile, compact needs and notifications
 
 on:
   workflow_dispatch:
