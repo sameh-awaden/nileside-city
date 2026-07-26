@@ -83,8 +83,8 @@ var shortage_cooldowns: Dictionary = {}
 var harvest_combo: int = 0
 var harvest_combo_timer: float = 0.0
 var lifetime_harvest_hits: int = 0
-var initialized := false
-var rng := RandomNumberGenerator.new()
+var initialized: bool = false
+var rng: RandomNumberGenerator = RandomNumberGenerator.new()
 
 
 func setup(manager, factory_nodes: Array) -> void:
@@ -127,7 +127,7 @@ func _check_chapter() -> void:
 
     chapter_index += 1
     objective_changed.emit()
-    var next_text := "The Great Nile Capital is complete."
+    var next_text: String = "The Great Nile Capital is complete."
     if chapter_index < CHAPTERS.size():
         next_text = "Next: %s" % String(CHAPTERS[chapter_index]["title"])
     notify("Chapter completed: %s" % String(chapter["title"]), "success")
@@ -174,7 +174,7 @@ func objective_progress() -> String:
     var chapter: Dictionary = CHAPTERS[chapter_index]
     match String(chapter["kind"]):
         "resource":
-            var resource_name := String(chapter["resource"])
+            var resource_name: String = String(chapter["resource"])
             return "%s %d/%d" % [resource_name.capitalize(), int(GameState.amount(resource_name)), int(chapter["target"])]
         "food":
             return "Food reserve %.1f/%.1f min" % [GameState.food_minutes(), float(chapter["target"])]
@@ -206,12 +206,12 @@ func record_harvest(resource_name: String, amount_value: float) -> void:
     lifetime_harvest_hits += 1
 
     if harvest_combo in [12, 24, 36]:
-        var coin_bonus := 12.0 + float(harvest_combo) * 1.5
+        var coin_bonus: float = 12.0 + float(harvest_combo) * 1.5
         GameState.add_coins(coin_bonus)
         notify("Harvest streak ×%d — bonus %d coins!" % [harvest_combo, int(coin_bonus)], "success")
 
     if lifetime_harvest_hits > 0 and lifetime_harvest_hits % 85 == 0:
-        var rich_bonus := maxf(8.0, amount_value * 12.0)
+        var rich_bonus: float = maxf(8.0, amount_value * 12.0)
         GameState.add_resource(resource_name, rich_bonus)
         notify("Rare rich deposit discovered — +%d %s!" % [int(rich_bonus), resource_name], "event")
         celebration_requested.emit("RICH RESOURCE POCKET", "Your sickles uncovered an unusually rich patch of %s." % resource_name.capitalize())
@@ -224,20 +224,20 @@ func generate_contracts() -> void:
         resource_pool.append("pottery")
         resource_pool.append("scrolls")
 
-    var unit_values := {"dates": 2.2, "pottery": 8.5, "scrolls": 12.0}
+    var unit_values: Dictionary = {"dates": 2.2, "pottery": 8.5, "scrolls": 12.0}
     var bonus_resources: Array[String] = ["timber", "bricks", "blocks"]
 
     for index in range(3):
-        var requirements := {}
+        var requirements: Dictionary = {}
         var first_resource: String = resource_pool[index % resource_pool.size()]
-        var first_amount := round(16.0 + float(GameState.city_level) * 7.0 + float(index) * 6.0)
+        var first_amount: float = round(16.0 + float(GameState.city_level) * 7.0 + float(index) * 6.0)
         requirements[first_resource] = first_amount
 
         if resource_pool.size() > 1 and index == 2:
             var second_resource: String = resource_pool[(index + 1) % resource_pool.size()]
             requirements[second_resource] = round(10.0 + float(GameState.city_level) * 4.0)
 
-        var goods_value := 0.0
+        var goods_value: float = 0.0
         for resource_name in requirements.keys():
             goods_value += float(requirements[resource_name]) * float(unit_values[resource_name])
 
@@ -277,10 +277,10 @@ func deliver_active_contract() -> bool:
         notify("The contract is not ready. Produce the remaining requested goods.", "warning")
         return false
 
-    var completed_name := String(active_contract["name"])
-    var reward_coins := float(active_contract["reward_coins"])
-    var bonus_resource := String(active_contract["bonus_resource"])
-    var bonus_amount := float(active_contract["bonus_amount"])
+    var completed_name: String = String(active_contract["name"])
+    var reward_coins: float = float(active_contract["reward_coins"])
+    var bonus_resource: String = String(active_contract["bonus_resource"])
+    var bonus_amount: float = float(active_contract["bonus_amount"])
     var requirements: Dictionary = active_contract["requirements"]
 
     for resource_name in requirements.keys():
@@ -358,13 +358,13 @@ func _check_city_status() -> void:
         if not is_instance_valid(factory) or factory.level <= 0 or not factory.is_unlocked():
             continue
 
-        var full_key := "%s_full" % String(factory.factory_id)
+        var full_key: String = "%s_full" % String(factory.factory_id)
         if factory.output_buffer >= factory.storage_capacity() * 0.94 and _cooldown_ready(full_key):
             shortage_cooldowns[full_key] = 75.0
             notify("%s storage is full — improve hauling or its conveyor." % factory.display_name, "warning", factory.global_position)
             continue
 
-        var input_key := "%s_input" % String(factory.factory_id)
+        var input_key: String = "%s_input" % String(factory.factory_id)
         if GameState.amount(factory.input_resource) < factory.input_amount and _cooldown_ready(input_key):
             shortage_cooldowns[input_key] = 95.0
             notify("%s needs more %s." % [factory.display_name, factory.input_resource], "warning", factory.global_position)
@@ -376,25 +376,25 @@ func _cooldown_ready(key: String) -> bool:
 
 func _start_random_event() -> void:
     event_cooldown = rng.randf_range(90.0, 135.0)
-    var event_index := rng.randi_range(0, 3)
+    var event_index: int = rng.randi_range(0, 3)
 
     match event_index:
         0:
-            var grain_bonus := 28.0 + float(GameState.city_level) * 9.0
-            var dates_bonus := 10.0 + float(GameState.city_level) * 4.0
+            var grain_bonus: float = 28.0 + float(GameState.city_level) * 9.0
+            var dates_bonus: float = 10.0 + float(GameState.city_level) * 4.0
             GameState.add_resource("grain", grain_bonus)
             GameState.add_resource("dates", dates_bonus)
             notify("Nile floodwaters enriched the farms.", "event")
             celebration_requested.emit("FLOOD SEASON", "The Nile has renewed the fields.\n\n+%d grain and +%d dates." % [int(grain_bonus), int(dates_bonus)])
         1:
-            var stone_bonus := 24.0 + float(GameState.city_level) * 8.0
-            var clay_bonus := 18.0 + float(GameState.city_level) * 6.0
+            var stone_bonus: float = 24.0 + float(GameState.city_level) * 8.0
+            var clay_bonus: float = 18.0 + float(GameState.city_level) * 6.0
             GameState.add_resource("stone", stone_bonus)
             GameState.add_resource("clay", clay_bonus)
             notify("Workers discovered a rich quarry seam.", "event")
             celebration_requested.emit("RICH QUARRY SEAM", "A fresh deposit has been uncovered.\n\n+%d stone and +%d raw clay." % [int(stone_bonus), int(clay_bonus)])
         2:
-            var royal_coins := 180.0 + float(GameState.city_level) * 140.0
+            var royal_coins: float = 180.0 + float(GameState.city_level) * 140.0
             GameState.add_coins(royal_coins)
             notify("A royal inspector rewarded the city's progress.", "event")
             celebration_requested.emit("ROYAL INSPECTION", "The city impressed the royal court.\n\n+%d coins." % int(royal_coins))
