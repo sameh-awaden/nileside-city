@@ -210,12 +210,6 @@ func record_harvest(resource_name: String, amount_value: float) -> void:
         GameState.add_coins(coin_bonus)
         notify("Harvest streak ×%d — bonus %d coins!" % [harvest_combo, int(coin_bonus)], "success")
 
-    if lifetime_harvest_hits > 0 and lifetime_harvest_hits % 85 == 0:
-        var rich_bonus: float = maxf(8.0, amount_value * 12.0)
-        GameState.add_resource(resource_name, rich_bonus)
-        notify("Rare rich deposit discovered — +%d %s!" % [int(rich_bonus), resource_name], "event")
-        celebration_requested.emit("RICH RESOURCE POCKET", "Your sickles uncovered an unusually rich patch of %s." % resource_name.capitalize())
-
 
 func generate_contracts() -> void:
     contract_offers.clear()
